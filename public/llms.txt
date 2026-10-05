@@ -1,0 +1,14 @@
+# Ábaco del Tiempo
+
+> Portafolio digital académico de Historia de las Matemáticas (Licenciatura en Matemáticas, UNAD). Reúne las entregas por fases, una línea de tiempo, entrevistas en video, recursos interactivos, galería de evidencias, bitácora del equipo, quiz y referencias en APA 7.
+
+## Secciones
+
+- [Inicio](/): portada del portafolio.
+- [Aprendizajes y evaluación](/#aprendizajes): tres momentos y cinco fases con sus documentos de entrega.
+- [Línea de tiempo](/#linea-de-tiempo): cronología de los temas estudiados.
+- [Voces de la historia](/#entrevistas): entrevistas en video.
+- [Recursos digitales](/#recursos): infografías, presentaciones, actividades y juegos.
+- [Galería](/#galeria): evidencias del trabajo colaborativo.
+- [Equipo](/#equipo): integrantes del grupo.
+- [Referencias](/#referencias): bibliografía en formato APA 7.ª edición.

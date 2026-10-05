@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ábaco del Tiempo — Portafolio Digital Académico</title>
+    <meta
+      name="description"
+      content="Ábaco del Tiempo: rutas del conocimiento matemático. Portafolio digital académico de Historia de las Matemáticas, UNAD."
+    />
+    <meta name="theme-color" content="#071426" />
+    <meta name="color-scheme" content="dark light" />
+    <script src="/theme.js"></script>
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2" />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ábaco del Tiempo" />
+    <meta property="og:title" content="Ábaco del Tiempo — Portafolio Digital Académico" />
+    <meta
+      property="og:description"
+      content="Rutas del conocimiento matemático. Historia de las Matemáticas · UNAD."
+    />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Ábaco del Tiempo: título dorado junto a una espiral de Arquímedes" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og-image.jpg" />
+  </head>
+  <body>
+    <noscript>
+      <p style="padding: 2rem; font-family: sans-serif">
+        Ábaco del Tiempo necesita JavaScript para funcionar. Actívalo en tu navegador e inténtalo de nuevo.
+      </p>
+    </noscript>
+    <!--
+      Portada ya pintada en el HTML: el texto aparece sin esperar al JavaScript (mejor LCP).
+      Es solo visual (aria-hidden). Al arrancar, React pinta la misma portada encima y esta se oculta
+      (no se borra: si se borrara, el navegador volvería a contar el LCP).
+    -->
+    <section
+        id="prerender"
+        aria-hidden="true"
+        class="absolute inset-x-0 top-0 isolate flex min-h-screen items-center overflow-hidden px-4 pb-20 pt-32 sm:px-6"
+      >
+        <div aria-hidden="true" class="grid-geometrico absolute inset-0 -z-20"></div>
+        <div class="mx-auto w-full max-w-5xl">
+          <p class="text-xs font-medium uppercase tracking-[0.3em] text-teal sm:text-sm">Historia de las Matemáticas · UNAD</p>
+          <h1
+            class="mt-4 bg-gradient-to-r from-gold via-[#ffe4a3] to-gold bg-clip-text font-serif text-6xl font-semibold leading-[0.95] text-transparent sm:text-8xl"
+          >
+            Ábaco del Tiempo
+          </h1>
+          <p class="mt-5 max-w-2xl font-serif text-2xl text-[var(--text)] sm:text-3xl">
+            Rutas del conocimiento matemático — Portafolio Digital Académico
+          </p>
+          <p class="mt-3 font-serif text-lg italic text-gold/90">“Aprender, crear y transformar el conocimiento”</p>
+          <p class="mt-8 max-w-2xl leading-relaxed text-[var(--text-muted)]">
+            Este portafolio digital reúne los principales productos académicos desarrollados durante el proceso formativo. Cada
+            recurso evidencia la evolución de nuestros aprendizajes mediante la investigación, la creatividad, el análisis y el uso
+            de herramientas digitales.
+          </p>
+          <dl class="mt-8 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
+            <div><dt class="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Asignatura</dt><dd class="text-sm text-[var(--text)]">Historia de las Matemáticas</dd></div>
+            <div><dt class="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Universidad</dt><dd class="text-sm text-[var(--text)]">Universidad Nacional Abierta y a Distancia (UNAD)</dd></div>
+            <div><dt class="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Programa</dt><dd class="text-sm text-[var(--text)]">Licenciatura en Matemáticas</dd></div>
+            <div><dt class="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Docente</dt><dd class="text-sm text-[var(--text)]">[Por completar]</dd></div>
+            <div><dt class="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Periodo</dt><dd class="text-sm text-[var(--text)]">[Por completar]</dd></div>
+            <div><dt class="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Grupo</dt><dd class="text-sm text-[var(--text)]">[Por completar]</dd></div>
+          </dl>
+        </div>
+      </section>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

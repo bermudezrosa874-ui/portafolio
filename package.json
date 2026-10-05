@@ -1,0 +1,40 @@
+{
+  "name": "abaco-del-tiempo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Ábaco del Tiempo — Portafolio Digital Académico (Historia de las Matemáticas, UNAD)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "db:push": "supabase db push",
+    "db:list": "supabase migration list"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "supabase": "^2.119.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@supabase/supabase-js": "^2.117.2",
+    "@tanstack/react-query": "^5.104.1",
+    "docx-preview": "^0.4.1",
+    "dompurify": "^3.4.16",
+    "lucide-react": "^1.52.0",
+    "motion": "^14.0.0",
+    "pdfjs-dist": "^6.4.299",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4",
+    "zod": "^4.6.5"
+  }
+}

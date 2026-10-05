@@ -1,0 +1,25 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://hjswgcpefurngogxixzs.supabase.co https://i.ytimg.com; font-src 'self' data:; connect-src 'self' blob: data: https://hjswgcpefurngogxixzs.supabase.co wss://hjswgcpefurngogxixzs.supabase.co; media-src 'self' blob: https://hjswgcpefurngogxixzs.supabase.co; worker-src 'self' blob:; frame-src https://www.youtube.com https://*.youtube.com https://player.vimeo.com https://*.vimeo.com https://drive.google.com https://docs.google.com https://*.genially.com https://*.canva.com https://canva.com https://*.prezi.com https://prezi.com https://*.padlet.com https://padlet.com https://*.wordwall.net https://wordwall.net https://*.liveworksheets.com https://liveworksheets.com https://*.mentimeter.com https://mentimeter.com https://cdn.knightlab.com https://onedrive.live.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+        },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()" },
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    }
+  ]
+}
