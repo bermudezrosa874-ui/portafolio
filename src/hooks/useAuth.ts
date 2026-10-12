@@ -30,7 +30,7 @@ export function useSession() {
   return { session, ready }
 }
 
-/** Rol del usuario con sesión: 'admin', 'member' o null (visitante). La RLS es la defensa real. */
+/** Rol del usuario con sesión: 'admin' (Rosa), 'collaborator', 'user' o null (visitante). La RLS es la defensa real. */
 export function useRole() {
   const { session, ready } = useSession()
   const userId = session?.user.id
@@ -41,7 +41,7 @@ export function useRole() {
       const supabase = await getSupabase()
       const { data, error } = await supabase.from('profiles').select('role').eq('user_id', userId!).maybeSingle()
       if (error) throw error
-      return (data?.role as 'admin' | 'member' | undefined) ?? null
+      return (data?.role as 'admin' | 'collaborator' | 'user' | undefined) ?? null
     },
   })
   return {
@@ -50,6 +50,7 @@ export function useRole() {
     roleLoading: !!userId && roleLoading,
     role: userId ? (role ?? null) : null,
     isAdmin: role === 'admin',
+    isCollaborator: role === 'collaborator',
     userName: session?.user.email ?? null,
   }
 }

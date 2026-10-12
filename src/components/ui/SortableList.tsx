@@ -28,7 +28,7 @@ export function SortableList<T extends { id: string }>({ items, render, onReorde
   }
 
   const btn =
-    'grid h-9 w-9 place-items-center rounded-lg border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface)] disabled:opacity-30 disabled:hover:bg-transparent'
+    'grid h-9 w-9 place-items-center rounded-lg border border-[var(--border)] text-[var(--text)] hover:bg-[var(--hover)] disabled:opacity-30 disabled:hover:bg-transparent'
 
   return (
     <>

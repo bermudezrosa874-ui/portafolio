@@ -45,6 +45,8 @@ export interface Phase {
   status: PhaseStatus
   que_aprendimos: string
   position: number
+  /** La fase se dio por completa: ya no acepta subidas nuevas (Rosa puede reabrirla). */
+  uploads_closed?: boolean
 }
 
 export interface Deliverable {
@@ -79,6 +81,8 @@ export interface Resource {
   description: string
   phase_id: number | null
   position: number
+  uploaded_by?: string | null
+  uploaded_by_name?: string
 }
 
 export interface BehindScenes {
@@ -103,6 +107,8 @@ export interface Video {
   behind_scenes: BehindScenes
   phase_id: number | null
   position: number
+  uploaded_by?: string | null
+  uploaded_by_name?: string
 }
 
 export type EvidenceCategory =
@@ -138,16 +144,6 @@ export interface Reflection {
   dificulto: string
   sorprendio: string
   quisiera_aprender: string
-}
-
-export interface QuizQuestion {
-  id: string
-  question: string
-  options: string[]
-  correct_index: number
-  explanation: string
-  topic: string | null
-  position: number
 }
 
 export type ReferenceKind = 'libro' | 'articulo' | 'web' | 'imagen' | 'video' | 'recurso' | 'herramienta'

@@ -1,9 +1,9 @@
 import { useLayoutEffect } from 'react'
 import { motion, type Variants } from 'motion/react'
 import { ArrowDown } from 'lucide-react'
-import { useMembers, useSiteConfig } from '../../lib/queries'
+import { useSiteConfig } from '../../lib/queries'
 import { scrollToSection } from '../../lib/sections'
-import { ArchimedesSpiral } from './ArchimedesSpiral'
+import { MathArt } from './MathArt'
 
 const container: Variants = {
   hidden: {},
@@ -16,7 +16,6 @@ const item: Variants = {
 
 export function Hero() {
   const { data: cfg } = useSiteConfig()
-  const { data: members } = useMembers()
 
   // La portada estática del HTML se oculta (sin borrarla) en el mismo cuadro en que aparece esta.
   useLayoutEffect(() => {
@@ -26,15 +25,6 @@ export function Hero() {
 
   if (!cfg) return null
 
-  const details: [string, string][] = [
-    ['Asignatura', cfg.course],
-    ['Universidad', cfg.university],
-    ['Programa', cfg.program],
-    ['Docente', cfg.teacher],
-    ['Periodo', cfg.period],
-    ['Grupo', cfg.group_name],
-  ]
-
   return (
     <section
       id="inicio"
@@ -42,7 +32,7 @@ export function Hero() {
       className="relative isolate flex min-h-screen items-center overflow-hidden px-4 pb-20 pt-32 sm:px-6"
     >
       <div aria-hidden className="grid-geometrico absolute inset-0 -z-20" />
-      <ArchimedesSpiral className="absolute -right-24 top-1/2 -z-10 w-[min(120vw,760px)] -translate-y-1/2 opacity-30 sm:right-0 sm:opacity-40" />
+      <MathArt className="absolute right-4 top-1/2 -z-10 hidden w-[min(26vw,360px)] -translate-y-1/2 xl:block" />
 
       <motion.div
         variants={container}
@@ -60,7 +50,7 @@ export function Hero() {
         <motion.h1
           id="titulo-portada"
           variants={item}
-          className="mt-4 bg-gradient-to-r from-gold via-[#ffe4a3] to-gold bg-clip-text font-serif text-6xl font-semibold leading-[0.95] text-transparent sm:text-8xl"
+          className="mt-4 bg-gradient-to-r from-gold via-[#e7c98a] to-gold [html[data-theme=light]_&]:via-[#c9892a] bg-clip-text font-serif text-6xl font-semibold leading-[0.95] text-transparent sm:text-8xl"
         >
           {cfg.title}
         </motion.h1>
@@ -76,29 +66,6 @@ export function Hero() {
         <motion.p variants={item} className="mt-8 max-w-2xl leading-relaxed text-[var(--text-muted)]">
           {cfg.intro_text}
         </motion.p>
-
-        <motion.dl variants={item} className="mt-8 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
-          {details.map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">{label}</dt>
-              <dd className="text-sm text-[var(--text)]">{value}</dd>
-            </div>
-          ))}
-        </motion.dl>
-
-        <motion.div variants={item} className="mt-8">
-          <h2 className="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Integrantes</h2>
-          <ul className="mt-2 flex flex-wrap gap-2">
-            {members?.map((m) => (
-              <li
-                key={m.id}
-                className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-sm backdrop-blur"
-              >
-                {m.name} <span className="text-gold">· {m.topic}</span>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
 
         <motion.div variants={item} className="mt-10">
           <motion.button

@@ -1,6 +1,6 @@
 import { publicUrl } from '../lib/upload'
 
-/** Iniciales sin los marcadores «[Por completar]». */
+/** Iniciales sin marcadores entre corchetes. */
 function initials(name: string): string {
   const words = name
     .replace(/\[[^\]]*\]/g, '')

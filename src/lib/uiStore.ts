@@ -40,9 +40,10 @@ export const ui = {
       openMoments: state.openMoments.includes(momentId) ? state.openMoments : [...state.openMoments, momentId],
       openPhases: state.openPhases.includes(phaseId) ? state.openPhases : [...state.openPhases, phaseId],
     })
+    scrollToSection('aprendizajes')
     window.setTimeout(() => {
       document.getElementById(`fase-${phaseId}`)?.scrollIntoView({ block: 'start' })
-    }, 450)
+    }, 800)
   },
 
   /** Acceso rápido: fija el filtro de fase y va a la sección indicada. */

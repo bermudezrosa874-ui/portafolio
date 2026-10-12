@@ -78,7 +78,7 @@ export default function JournalTab() {
                         aria-label={`${plain(m.name)}, fase ${p.id}: reflexión ${state}. Abrir`}
                         aria-pressed={on}
                         className={`grid h-10 w-full min-w-10 place-items-center rounded-lg border ${
-                          on ? 'border-gold bg-gold/15' : 'border-transparent hover:bg-[var(--surface)]'
+                          on ? 'border-gold bg-gold/15' : 'border-transparent hover:bg-[var(--hover)]'
                         } ${state === 'completa' ? 'text-emerald-500' : state === 'incompleta' ? 'text-[#f5b942]' : 'text-[var(--text-muted)]'}`}
                       >
                         {state === 'completa' ? <Check size={18} aria-hidden /> : state === 'incompleta' ? <span aria-hidden>…</span> : <Minus size={16} aria-hidden />}

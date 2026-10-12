@@ -18,7 +18,7 @@ export function PhaseFilterBar({ available, dark = false }: Props) {
       active
         ? 'border-[#f5b942] bg-[#f5b942] font-semibold text-[#071426]'
         : dark
-          ? 'border-white/20 text-slate-200 hover:border-white/50'
+          ? 'border-[var(--viewer-line)] text-[var(--viewer-text)] hover:border-gold'
           : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-gold'
     }`
 

@@ -35,7 +35,6 @@ export type Table =
   | 'reflections'
   | 'members'
   | 'member_emails'
-  | 'quiz_questions'
   | 'bibliography_refs'
 
 /** Consultas públicas que hay que refrescar cuando cambia cada tabla. */
@@ -50,7 +49,6 @@ const PUBLIC_KEYS: Record<Table, string[]> = {
   reflections: ['reflections', 'phase_counts'],
   members: ['members'],
   member_emails: [],
-  quiz_questions: ['quiz_questions'],
   bibliography_refs: ['bibliography_refs'],
 }
 
@@ -112,8 +110,8 @@ export async function persistOrder(table: Table, orderedIds: string[]) {
 export function friendlyError(e: unknown): string {
   const err = e as { code?: string; message?: string }
   if (err?.code === '42501') return 'No tienes permiso para hacer esto.'
-  if (err?.code === '23505') return 'Ya existe un elemento con ese valor.'
-  if (err?.code === '23514') return 'Alguno de los datos no cumple las reglas permitidas.'
+  if (err?.code === '23505') return /one_per_phase|one_timeline/.test(err.message ?? '') ? 'Ese espacio ya lo ocupó otra persona: solo se puede subir uno.' : 'Ya existe un elemento con ese valor.'
+  if (err?.code === '23514') return /phase_required/.test(err.message ?? '') ? 'Elige la fase.' : 'Alguno de los datos no cumple las reglas permitidas.'
   if (err?.code === '23503') return 'Este elemento está en uso y no se puede eliminar o cambiar así.'
   if (typeof err?.message === 'string' && /failed to fetch|network/i.test(err.message)) {
     return 'No hay conexión con el servidor. Revisa tu internet e inténtalo de nuevo.'

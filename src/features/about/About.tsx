@@ -45,11 +45,11 @@ export function About() {
         <Reveal className="mb-6 mt-14 text-center">
           <h3 className="font-serif text-3xl font-semibold text-[var(--text)]">Objetivos específicos</h3>
         </Reveal>
-        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="flex flex-wrap justify-center gap-4">
           {objectives.map((text, i) => {
             const Icon = ICONS[i % ICONS.length]
             return (
-              <li key={i}>
+              <li key={i} className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]">
                 <Reveal
                   delay={i * 0.08}
                   className="h-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 backdrop-blur transition-transform hover:-translate-y-1"

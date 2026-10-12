@@ -101,11 +101,11 @@ export default function PdfViewer({ url, onError }: Props) {
   }, [go])
 
   const btn =
-    'grid h-10 w-10 place-items-center rounded-lg border border-white/15 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent'
+    'grid h-10 w-10 place-items-center rounded-lg border border-[var(--viewer-line)] hover:bg-[var(--viewer-hover)] disabled:opacity-30 disabled:hover:bg-transparent'
 
   return (
-    <div className="flex h-full flex-col bg-[#1b2433]">
-      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 border-b border-white/10 px-3 py-2 text-sm text-slate-200">
+    <div className="flex h-full flex-col bg-[var(--viewer-panel)]">
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-1 border-b border-[var(--viewer-line)] px-3 py-2 text-sm text-[var(--viewer-text)]">
         <div className="flex items-center gap-1.5">
         <button type="button" className={btn} onClick={() => go(-1)} disabled={page <= 1} aria-label="Página anterior">
           <ChevronLeft size={20} aria-hidden />
@@ -129,7 +129,7 @@ export default function PdfViewer({ url, onError }: Props) {
         </button>
         <button
           type="button"
-          className="min-h-10 min-w-14 rounded-lg px-1 tabular-nums hover:bg-white/10"
+          className="min-h-10 min-w-14 rounded-lg px-1 tabular-nums hover:bg-[var(--viewer-hover)]"
           onClick={() => setZoomIdx(2)}
           aria-label="Restablecer zoom"
         >
@@ -160,7 +160,7 @@ export default function PdfViewer({ url, onError }: Props) {
       </div>
 
       <div ref={hostRef} className="min-h-0 flex-1 overflow-auto p-3" tabIndex={0} aria-label="Documento PDF">
-        {loading && <p className="p-8 text-center text-slate-300">Cargando documento…</p>}
+        {loading && <p className="p-8 text-center text-[var(--viewer-muted)]">Cargando documento…</p>}
         <canvas ref={canvasRef} className="mx-auto block bg-white shadow-xl" />
       </div>
     </div>

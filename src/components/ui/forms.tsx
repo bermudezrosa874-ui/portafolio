@@ -104,7 +104,7 @@ export function SelectField({
   error,
   hint,
   required,
-}: BaseProps & { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
+}: BaseProps & { value: string; onChange: (v: string) => void; options: { value: string; label: string; disabled?: boolean }[] }) {
   const id = useId()
   return (
     <Wrap id={id} label={label} error={error} hint={hint} required={required}>
@@ -117,7 +117,7 @@ export function SelectField({
         className={`${input} ${border(error)}`}
       >
         {options.map((o) => (
-          <option key={o.value} value={o.value}>
+          <option key={o.value} value={o.value} disabled={o.disabled}>
             {o.label}
           </option>
         ))}
@@ -160,9 +160,9 @@ export function Toggle({
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost'
 const VARIANT: Record<Variant, string> = {
   primary: 'bg-[#f5b942] text-[#071426] hover:brightness-110',
-  secondary: 'border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface)]',
+  secondary: 'border border-[var(--border)] text-[var(--text)] hover:bg-[var(--hover)]',
   danger: 'bg-red-600 text-white hover:bg-red-500',
-  ghost: 'text-[var(--text)] hover:bg-[var(--surface)]',
+  ghost: 'text-[var(--text)] hover:bg-[var(--hover)]',
 }
 
 export function Button({
@@ -185,7 +185,7 @@ export function Button({
 }
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 ${className}`}>{children}</div>
+  return <div className={`soft-shadow rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 ${className}`}>{children}</div>
 }
 
 export function TabIntro({ title, children }: { title: string; children?: ReactNode }) {

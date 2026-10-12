@@ -27,7 +27,7 @@ export function Videos() {
     <section
       id="entrevistas"
       aria-labelledby="entrevistas-titulo"
-      className="relative scroll-mt-24 overflow-hidden bg-[#04070d] px-4 py-24 text-slate-200 sm:px-6"
+      className="relative scroll-mt-24 overflow-hidden bg-[var(--viewer-bg)] px-4 py-24 text-[var(--viewer-text)] sm:px-6"
     >
       <div aria-hidden className="film-strip absolute inset-x-0 top-0 h-5" />
       <div aria-hidden className="film-strip absolute inset-x-0 bottom-0 h-5" />
@@ -35,13 +35,13 @@ export function Videos() {
 
       <div className="relative mx-auto max-w-6xl">
         <Reveal className="mb-10 text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.3em] text-[#67e8f9]">Entrevistas · videos</p>
-          <h2 id="entrevistas-titulo" className="mt-2 font-serif text-4xl font-semibold text-[#f5b942] sm:text-5xl">
+          <p className="text-xs font-medium uppercase tracking-[0.3em] text-teal">Entrevistas · videos</p>
+          <h2 id="entrevistas-titulo" className="mt-2 font-serif text-4xl font-semibold text-gold sm:text-5xl">
             Voces de la historia
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-slate-300">{cfg?.videos_intro || INTRO_FALLBACK}</p>
-          <p className="mt-4 text-sm text-slate-400">
-            <CountUp value={videos.length} className="font-serif text-2xl text-[#f5b942]" />{' '}
+          <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-[var(--viewer-muted)]">{cfg?.videos_intro || INTRO_FALLBACK}</p>
+          <p className="mt-4 text-sm text-[var(--viewer-muted)]">
+            <CountUp value={videos.length} className="font-serif text-2xl text-gold" />{' '}
             {videos.length === 1 ? 'video publicado' : 'videos publicados'}
           </p>
         </Reveal>

@@ -6,7 +6,7 @@ export const IDLE_FLAG = 'abaco-sesion-inactiva'
 const EVENTS = ['pointerdown', 'keydown', 'scroll', 'touchstart', 'mousemove'] as const
 
 /** Cierra la sesión tras `minutes` sin actividad y avisa un minuto antes. */
-export function useIdleLogout(active: boolean, minutes = 30) {
+export function useIdleLogout(active: boolean, minutes = 60) {
   const toast = useToast()
 
   useEffect(() => {
@@ -23,7 +23,8 @@ export function useIdleLogout(active: boolean, minutes = 30) {
       )
       out = window.setTimeout(() => {
         writeFlag(IDLE_FLAG, '1')
-        void import('../lib/supabase').then(({ supabase }) => supabase.auth.signOut())
+        // Al cerrarse por inactividad se vuelve al portafolio (el aviso se muestra allí).
+        void import('../lib/supabase').then(({ supabase }) => supabase.auth.signOut()).then(() => window.location.assign('/'))
       }, minutes * 60_000)
     }
 

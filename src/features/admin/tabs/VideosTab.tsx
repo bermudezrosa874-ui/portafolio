@@ -19,7 +19,7 @@ const BEHIND: [keyof BehindScenes, string][] = [
   ['aprendizajes', 'Aprendizajes'],
 ]
 
-function VideoForm({ initial, nextPosition, phases, onClose }: { initial: Row | null; nextPosition: number; phases: Phase[]; onClose: () => void }) {
+function VideoForm({ initial, nextPosition, phases, onClose, defaultPublished, taken }: { initial: Row | null; nextPosition: number; phases: Phase[]; onClose: () => void; defaultPublished: boolean; taken: Record<number, string> }) {
   const refresh = useRefresh()
   const { busy, run } = useAction()
   const [f, setF] = useState({
@@ -30,7 +30,7 @@ function VideoForm({ initial, nextPosition, phases, onClose }: { initial: Row | 
     description: initial?.description ?? '',
     credits: initial?.credits ?? '',
     phase_id: initial?.phase_id ? String(initial.phase_id) : '',
-    published: initial?.published ?? false,
+    published: initial?.published ?? defaultPublished,
   })
   const [behind, setBehind] = useState<BehindScenes>(initial?.behind_scenes ?? {})
   const [touched, setTouched] = useState(false)
@@ -43,7 +43,7 @@ function VideoForm({ initial, nextPosition, phases, onClose }: { initial: Row | 
 
   const save = async () => {
     setTouched(true)
-    if (!f.title.trim() || !info.valid || durationError) return
+    if (!f.title.trim() || !info.valid || durationError || !f.phase_id) return
     const d = deriveEmbed(f.url)
     const payload = {
       title: f.title.trim(),
@@ -68,7 +68,13 @@ function VideoForm({ initial, nextPosition, phases, onClose }: { initial: Row | 
     if (ok) onClose()
   }
 
-  const phaseOptions = [{ value: '', label: 'Sin fase' }, ...phases.map((p) => ({ value: String(p.id), label: `Fase ${p.id}: ${p.title}` }))]
+  const phaseOptions = [
+    { value: '', label: 'Elige la fase…', disabled: true },
+    ...phases.map((p) => {
+      const busy = !!taken[p.id] && p.id !== initial?.phase_id
+      return { value: String(p.id), label: `Fase ${p.id}: ${p.title}`, busy }
+    }).filter((o) => !o.busy),
+  ]
   const previewVideo: Video = {
     id: 'preview',
     title: f.title || 'Título del video',
@@ -100,7 +106,7 @@ function VideoForm({ initial, nextPosition, phases, onClose }: { initial: Row | 
       </div>
       <TextArea label="Descripción" value={f.description} onChange={set('description')} rows={3} maxLength={1000} />
       <TextField label="Créditos" value={f.credits} onChange={set('credits')} maxLength={300} />
-      <SelectField label="Fase relacionada" value={f.phase_id} onChange={set('phase_id')} options={phaseOptions} />
+      <SelectField label="Fase" value={f.phase_id} onChange={set('phase_id')} options={phaseOptions} required error={touched && !f.phase_id ? 'Elige la fase.' : undefined} hint="Cada fase tiene un solo video o entrevista." />
 
       <fieldset className="space-y-3 rounded-xl border border-[var(--border)] p-4">
         <legend className="px-2 text-sm font-medium text-[var(--text)]">«Detrás de la entrevista» (opcional)</legend>
@@ -129,8 +135,12 @@ function VideoForm({ initial, nextPosition, phases, onClose }: { initial: Row | 
   )
 }
 
-export default function VideosTab() {
-  const { data: rows = [], isLoading } = useAdminRows<Row>('videos', [['position', true], ['created_at', true]])
+/** ownerId: modo colaborador (solo ve y maneja lo que subió él). Sin ownerId: Rosa, que maneja todo. */
+export default function VideosTab({ ownerId }: { ownerId?: string }) {
+  const { data: all = [], isLoading } = useAdminRows<Row>('videos', [['position', true], ['created_at', true]])
+  const rows = ownerId ? all.filter((r) => r.uploaded_by === ownerId) : all
+  const taken: Record<number, string> = {}
+  for (const r of all) if (r.phase_id) taken[r.phase_id] = r.uploaded_by_name || 'otro integrante'
   const { data: phases = [] } = useAdminRows<Phase>('phases')
   const confirm = useConfirm()
   const refresh = useRefresh()
@@ -162,7 +172,7 @@ export default function VideosTab() {
       )}
 
       {editing !== null && (
-        <VideoForm key={editing === 'new' ? 'new' : editing.id} initial={editing === 'new' ? null : editing} nextPosition={Math.max(0, ...rows.map((r) => r.position)) + 1} phases={phases} onClose={() => setEditing(null)} />
+        <VideoForm taken={taken} defaultPublished={!!ownerId} key={editing === 'new' ? 'new' : editing.id} initial={editing === 'new' ? null : editing} nextPosition={Math.max(0, ...rows.map((r) => r.position)) + 1} phases={phases} onClose={() => setEditing(null)} />
       )}
 
       {isLoading && <p className="text-[var(--text-muted)]">Cargando…</p>}

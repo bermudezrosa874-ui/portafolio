@@ -11,14 +11,14 @@ import { useUi } from '../../lib/uiStore'
 import type { Reflection } from '../../types'
 import { REFLECTION_FIELDS, ReflectionEditor } from './ReflectionEditor'
 
-const META: Record<(typeof REFLECTION_FIELDS)[number]['key'], { icon: LucideIcon; color: string }> = {
+export const META: Record<(typeof REFLECTION_FIELDS)[number]['key'], { icon: LucideIcon; color: string }> = {
   aprendi: { icon: Lightbulb, color: '#06B6D4' },
   dificulto: { icon: Mountain, color: '#7C3AED' },
   sorprendio: { icon: Sparkles, color: '#F5B942' },
   quisiera_aprender: { icon: Compass, color: '#2563EB' },
 }
 
-const isComplete = (r: Reflection | undefined) =>
+export const isComplete = (r: Reflection | undefined) =>
   !!r && [r.aprendi, r.dificulto, r.sorprendio, r.quisiera_aprender].every((t) => t.trim().length > 0)
 
 const firstName = (name: string) => name.replace(/\[[^\]]*\]/g, '').trim().split(/\s+/)[0] || 'Integrante'
@@ -104,7 +104,6 @@ export function Journal() {
                 >
                   <Avatar name={m.name} photoPath={m.photo_path} size={56} />
                   <span className="font-serif text-lg font-semibold leading-tight text-[var(--text)]">{firstName(m.name)}</span>
-                  <span className="text-xs text-[var(--text-muted)]">{m.topic}</span>
                   <span className="rounded-full bg-[var(--border)] px-2.5 py-0.5 text-xs tabular-nums text-[var(--text)]">
                     {firstName(m.name)}: {done}/{phaseIds.length} fases completadas
                   </span>
@@ -153,7 +152,7 @@ export function Journal() {
                   <button
                     type="button"
                     onClick={() => setFlips(allFlipped ? [false, false, false, false] : [true, true, true, true])}
-                    className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--text)] hover:bg-[var(--surface)]"
+                    className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--text)] hover:bg-[var(--hover)]"
                   >
                     {allFlipped ? 'Mostrar frentes' : 'Voltear todas'}
                   </button>

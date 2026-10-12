@@ -60,7 +60,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-md rounded-2xl border border-white/15 bg-[#0b1220] p-6 text-slate-100 shadow-2xl"
+                className="w-full max-w-md rounded-2xl border border-white/15 bg-[var(--toast-bg)] p-6 text-slate-100 shadow-2xl"
               >
                 <div className="flex items-start gap-3">
                   <AlertTriangle className={state.opts.danger ? 'text-red-400' : 'text-[#f5b942]'} aria-hidden />

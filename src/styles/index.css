@@ -17,29 +17,104 @@
   --color-teal: var(--c-teal);
 }
 
+/* Modo oscuro: noche azulada con un toque violeta, tarjetas suaves y acentos pastel. */
 :root {
-  --c-gold: #f5b942;
-  --c-teal: #06b6d4;
-  --card: #0e2140;
-  --bg: #071426;
-  --surface: rgb(255 255 255 / 0.05);
-  --border: rgb(255 255 255 / 0.12);
-  --text: #f3f4f6;
-  --text-muted: #cbd5e1;
+  --color-abyss: #151a27;
+  --color-abyss-2: #1c2030;
+  --c-gold: #d6a85a;
+  --c-gold-soft: #e7c98a;
+  --c-teal: #69c7f2;
+  --card: #2a2f42;
+  --bg: #151a27;
+  --bg-image: linear-gradient(135deg, #151a27 0%, #1c2030 45%, #241d30 100%);
+  --surface: rgb(35 40 58 / 0.9);
+  --surface-soft: rgb(35 40 58 / 0.72);
+  --hover: rgb(105 199 242 / 0.08);
+  --header-bg: rgb(27 31 44 / 0.92);
+  --menu-bg: #1b1f2c;
+  --menu-hover: rgb(105 199 242 / 0.08);
+  --menu-active: rgb(168 140 245 / 0.14);
+  --icon-btn: rgb(255 255 255 / 0.05);
+  --toast-bg: #23283a;
+  --border: rgb(255 255 255 / 0.08);
+  --text: #f4f1ea;
+  --text-muted: #c9c6d6;
+  --text-subtle: #9ea7bc;
+  /* Visores (PDF, Word, ventanas, videos y galería ampliada) */
+  --viewer-bg: #151a27;
+  --viewer-panel: #1c2030;
+  --viewer-overlay: rgb(21 26 39 / 0.96);
+  --viewer-text: #f4f1ea;
+  --viewer-muted: #c9c6d6;
+  --viewer-line: rgb(255 255 255 / 0.1);
+  --viewer-hover: rgb(105 199 242 / 0.08);
+  --film-hole: rgb(255 255 255 / 0.14);
   color-scheme: dark;
 }
 
+/* Modo claro: rosadito que se funde con azul cielo suave. */
 :root[data-theme='light'] {
+  --color-abyss: #121214;
+  --color-abyss-2: #1b1b20;
   --c-gold: #8a5a00;
+  --surface-soft: rgb(255 255 255 / 0.7);
+  --hover: rgb(255 255 255 / 0.7);
+  --header-bg: rgb(255 255 255 / 0.7);
+  --menu-bg: #fff7fb;
+  --menu-hover: rgb(255 255 255 / 0.7);
+  --menu-active: rgb(167 139 250 / 0.25);
+  --icon-btn: transparent;
+  --toast-bg: #1b1b20;
+  --text-subtle: #6b5d80;
   --c-teal: #0e7490;
-  --card: #fffaf0;
-  --bg: #f6efdd;
-  --surface: rgb(255 255 255 / 0.65);
-  --border: rgb(7 20 38 / 0.15);
-  --text: #0b1a30;
-  --text-muted: #334155;
+  --card: #fff7fb;
+  --bg: #fde8f1;
+  --bg-image: linear-gradient(135deg, #ffe1ee 0%, #f6e6fb 42%, #d8ecff 100%);
+  --surface: rgb(255 255 255 / 0.7);
+  --border: rgb(76 29 110 / 0.16);
+  --text: #2a1b3d;
+  --text-muted: #4a3b61;
+  --viewer-bg: #fdeaf3;
+  --viewer-panel: #fff7fb;
+  --viewer-overlay: rgb(253 234 243 / 0.97);
+  --viewer-text: #2a1b3d;
+  --viewer-muted: #4a3b61;
+  --viewer-line: rgb(76 29 110 / 0.18);
+  --viewer-hover: rgb(76 29 110 / 0.08);
+  --film-hole: rgb(76 29 110 / 0.2);
   color-scheme: light;
 }
+
+/* ------------------------------------------------------------------------------------------
+   Solo modo oscuro (el claro no usa ninguna de estas reglas)
+   ------------------------------------------------------------------------------------------ */
+
+/* Cifras del resumen: cuatro pasteles nocturnos, suaves y distintos */
+:root:not([data-theme='light']) [data-tile='1'] { background-image: linear-gradient(135deg, #28324a, #2e2c46); }
+:root:not([data-theme='light']) [data-tile='2'] { background-image: linear-gradient(135deg, #3b2942, #32263d); }
+:root:not([data-theme='light']) [data-tile='3'] { background-image: linear-gradient(135deg, #223a3d, #263144); }
+:root:not([data-theme='light']) [data-tile='4'] { background-image: linear-gradient(135deg, #342845, #3a2740); }
+
+/* Botones principales (hoy dorados): en oscuro pasan a celeste y lila para integrarse */
+:root:not([data-theme='light']) button[class~='bg-[#f5b942]'],
+:root:not([data-theme='light']) a[class~='bg-[#f5b942]'] {
+  background-image: linear-gradient(135deg, #69c7f2, #a88cf5);
+  color: #151a27;
+}
+:root:not([data-theme='light']) button[class~='border-[#f5b942]'] { border-color: rgb(105 199 242 / 0.5); }
+:root:not([data-theme='light']) a[class~='from-[#f5b942]'] {
+  --tw-gradient-from: #69c7f2;
+  --tw-gradient-to: #a88cf5;
+  color: #151a27;
+}
+
+/* Sombras suaves (nunca negras) y elevación ligera al pasar el cursor */
+:root:not([data-theme='light']) .soft-shadow { box-shadow: 0 8px 24px rgb(0 0 0 / 0.18); }
+:root:not([data-theme='light']) .lift {
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.22);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+:root:not([data-theme='light']) .lift:hover { transform: translateY(-2px); }
 
 html {
   scroll-behavior: smooth;
@@ -52,7 +127,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg-image) fixed, var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -76,9 +151,9 @@ body {
 /* Perforaciones de cinta de película (sección de videos) */
 .film-strip {
   background:
-    repeating-linear-gradient(90deg, transparent 0 14px, rgb(255 255 255 / 0.18) 14px 26px, transparent 26px 40px)
+    repeating-linear-gradient(90deg, transparent 0 14px, var(--film-hole) 14px 26px, transparent 26px 40px)
       center / 100% 8px no-repeat,
-    #02040a;
+    var(--viewer-bg);
 }
 
 /* Deriva suave de los símbolos flotantes (solo transform) */

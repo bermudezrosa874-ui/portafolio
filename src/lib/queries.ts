@@ -3,7 +3,6 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { DEFAULT_CONFIG, DEFAULT_MEMBERS } from './defaults'
 import type {
   BibliographyRef,
-  QuizQuestion,
   Reflection,
   Deliverable,
   Evidence,
@@ -50,7 +49,7 @@ export function useResources() {
     queryFn: async (): Promise<Resource[]> => {
       const { data, error } = await (await getSupabase())
         .from('resources')
-        .select('id, kind, title, url, embed_url, cover_path, description, phase_id, position')
+        .select('id, kind, title, url, embed_url, cover_path, description, phase_id, position, uploaded_by_name')
         .eq('published', true)
         .order('position')
         .order('created_at')
@@ -67,7 +66,7 @@ export function useVideos() {
       const { data, error } = await (await getSupabase())
         .from('videos')
         .select(
-          'id, title, url, embed_url, platform, thumbnail_url, participants, duration, description, credits, behind_scenes, phase_id, position',
+          'id, title, url, embed_url, platform, thumbnail_url, participants, duration, description, credits, behind_scenes, phase_id, position, uploaded_by_name',
         )
         .eq('published', true)
         .order('position')
@@ -119,21 +118,6 @@ export function useReferences() {
         .eq('published', true)
       if (error) throw error
       return data as BibliographyRef[]
-    },
-  })
-}
-
-export function useQuizQuestions() {
-  return useQuery({
-    queryKey: ['quiz_questions'],
-    queryFn: async (): Promise<QuizQuestion[]> => {
-      const { data, error } = await (await getSupabase())
-        .from('quiz_questions')
-        .select('id, question, options, correct_index, explanation, topic, position')
-        .eq('published', true)
-        .order('position')
-      if (error) throw error
-      return data as QuizQuestion[]
     },
   })
 }

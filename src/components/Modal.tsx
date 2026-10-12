@@ -42,16 +42,16 @@ export function Modal({ open, onClose, title, children, actions }: Props) {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.97 }}
           transition={{ duration: 0.25 }}
-          className="fixed inset-0 z-[90] flex flex-col bg-abyss text-[#f3f4f6]"
+          className="fixed inset-0 z-[90] flex flex-col bg-[var(--viewer-bg)] text-[var(--viewer-text)]"
         >
-          <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
-            <h2 className="min-w-0 flex-1 truncate font-serif text-lg font-semibold text-[#f5b942]">{title}</h2>
+          <div className="flex items-center gap-3 border-b border-[var(--viewer-line)] px-4 py-3">
+            <h2 className="min-w-0 flex-1 truncate font-serif text-lg font-semibold text-gold">{title}</h2>
             {actions}
             <button
               type="button"
               onClick={onClose}
               aria-label="Cerrar"
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-full hover:bg-white/10"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full hover:bg-[var(--viewer-hover)]"
             >
               <X size={22} aria-hidden />
             </button>

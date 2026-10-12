@@ -51,7 +51,7 @@ export function DeliverableCard({ deliverable }: { deliverable: Deliverable | un
         </button>
         <a
           href={publicUrl('deliverables', deliverable.file_path, deliverable.file_name)}
-          className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text)] transition-transform hover:bg-[var(--surface)] active:scale-95"
+          className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] px-5 py-2.5 text-sm font-medium text-[var(--text)] transition-transform hover:bg-[var(--hover)] active:scale-95"
         >
           <Download size={18} aria-hidden /> Descargar
         </a>

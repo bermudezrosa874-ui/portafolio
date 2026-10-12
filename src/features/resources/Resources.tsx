@@ -111,7 +111,7 @@ export function Resources() {
               href={activeInfo.openUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--viewer-line)] px-4 py-2 text-sm hover:bg-[var(--viewer-hover)]"
             >
               <ExternalLink size={16} aria-hidden /> <span className="hidden sm:inline">Abrir en pestaña nueva</span>
               <span className="sr-only sm:hidden">Abrir en pestaña nueva</span>
@@ -120,7 +120,7 @@ export function Resources() {
         }
       >
         <div className="flex h-full flex-col">
-          <p className="bg-white/5 px-4 py-1.5 text-xs text-slate-300">
+          <p className="bg-[var(--viewer-hover)] px-4 py-1.5 text-xs text-[var(--viewer-muted)]">
             ¿No se ve bien? Ábrelo en una pestaña nueva con el botón de arriba.
           </p>
           <div className="min-h-0 flex-1 bg-white">

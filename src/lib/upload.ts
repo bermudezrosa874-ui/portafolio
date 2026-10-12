@@ -1,7 +1,7 @@
 // El cliente de Supabase se importa solo cuando hace falta: así no pesa en la carga inicial.
 const getSupabase = async () => (await import('./supabase')).supabase
 
-export type Bucket = 'deliverables' | 'evidences' | 'members' | 'covers'
+export type Bucket = 'deliverables' | 'evidences' | 'members' | 'covers' | 'contributions'
 
 /** URL pública de un archivo, armada sin el cliente (los buckets son públicos para lectura). */
 export const publicUrl = (bucket: Bucket, path: string, downloadName?: string) =>

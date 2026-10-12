@@ -61,8 +61,8 @@ export default function DocxViewer({ url, onError }: Props) {
   }, [url, onError])
 
   return (
-    <div ref={hostRef} className="h-full overflow-auto bg-[#1b2433] p-2" tabIndex={0} aria-label="Documento de Word">
-      {loading && <p className="p-8 text-center text-slate-300">Cargando documento…</p>}
+    <div ref={hostRef} className="h-full overflow-auto bg-[var(--viewer-panel)] p-2" tabIndex={0} aria-label="Documento de Word">
+      {loading && <p className="p-8 text-center text-[var(--viewer-muted)]">Cargando documento…</p>}
       <div ref={bodyRef} className="mx-auto" />
     </div>
   )

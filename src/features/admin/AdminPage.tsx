@@ -1,15 +1,38 @@
-import { lazy, Suspense, useRef, useState, type KeyboardEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ExternalLink, LogOut, ShieldAlert } from 'lucide-react'
+import { lazy, Suspense, useState, type ComponentType } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  BookOpen,
+  ClipboardList,
+  ExternalLink,
+  FileText,
+  FolderHeart,
+  Image,
+  KeyRound,
+  LayoutDashboard,
+  LogOut,
+  Puzzle,
+  Settings,
+  ShieldAlert,
+  Users,
+  Video,
+  type LucideIcon,
+} from 'lucide-react'
 import { Button } from '../../components/ui/forms'
+import { PanelBrand, Sidebar, SIDEBAR_PAD, ThemeFooter, type SidebarItem } from '../../components/layout/Sidebar'
 import { useRole, useSession } from '../../hooks/useAuth'
 import { ARRIVED_TYPE } from '../../lib/authHash'
 import { supabase } from '../../lib/supabase'
+import { useLogLogin, useNotifications } from '../contributions/api'
 import { LoginForm, SetPasswordForm } from './LoginForm'
+import type { TabGo } from './tabs/DashboardTab'
 
-const MemberHome = lazy(() => import('./MemberHome'))
+const CollaboratorHome = lazy(() => import('../contributions/CollaboratorHome'))
 
 const TABS = [
+  { id: 'resumen', label: 'Resumen', Panel: lazy(() => import('./tabs/DashboardTab')) },
+  { id: 'mios', label: 'Mis fases y aportes', Panel: lazy(() => import('./tabs/MyContributionsTab')) },
+  { id: 'aportes', label: 'Archivos del equipo', Panel: lazy(() => import('./tabs/TeamFilesTab')) },
+  { id: 'colaboradores', label: 'Colaboradores', Panel: lazy(() => import('./tabs/CollaboratorsTab')) },
   { id: 'general', label: 'Datos generales', Panel: lazy(() => import('./tabs/GeneralTab')) },
   { id: 'fases', label: 'Fases y entregas', Panel: lazy(() => import('./tabs/PhasesTab')) },
   { id: 'recursos', label: 'Línea de tiempo y recursos', Panel: lazy(() => import('./tabs/ResourcesTab')) },
@@ -17,9 +40,27 @@ const TABS = [
   { id: 'galeria', label: 'Galería', Panel: lazy(() => import('./tabs/GalleryTab')) },
   { id: 'bitacora', label: 'Bitácora', Panel: lazy(() => import('./tabs/JournalTab')) },
   { id: 'equipo', label: 'Equipo', Panel: lazy(() => import('./tabs/TeamTab')) },
-  { id: 'quiz', label: 'Quiz', Panel: lazy(() => import('./tabs/QuizTab')) },
   { id: 'referencias', label: 'Referencias', Panel: lazy(() => import('./tabs/ReferencesTab')) },
+  { id: 'cuenta', label: 'Mi cuenta', Panel: lazy(() => import('./tabs/AccountTab')) },
 ] as const
+
+type TabId = (typeof TABS)[number]['id']
+
+const TAB_ICONS: Record<TabId, LucideIcon> = {
+  resumen: LayoutDashboard,
+  mios: FolderHeart,
+  aportes: FolderHeart,
+  colaboradores: Users,
+  general: Settings,
+  fases: ClipboardList,
+  recursos: Puzzle,
+  videos: Video,
+  galeria: Image,
+  bitacora: BookOpen,
+  equipo: Users,
+  referencias: FileText,
+  cuenta: KeyRound,
+}
 
 // Si el visitante ya creó su contraseña en esta carga de la página, no se vuelve a pedir.
 let passwordHandled = false
@@ -35,67 +76,43 @@ function Loading({ text = 'Cargando…' }: { text?: string }) {
 }
 
 function AdminShell() {
-  const { userName } = useRole()
-  const [active, setActive] = useState<(typeof TABS)[number]['id']>('general')
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const { userName, session } = useRole()
+  useLogLogin(session?.user.id)
+  const { data: notifications = [] } = useNotifications()
+  const unread = notifications.filter((n) => !n.read).length
+  // Los botones «Subir» de cada fase llegan aquí con un ancla (/admin#recursos, #entrevistas o #fases).
+  const [active, setActive] = useState<TabId>(() => {
+    const target: Record<string, TabId> = { recursos: 'recursos', entrevistas: 'videos', fases: 'mios', entregas: 'fases' }
+    return target[window.location.hash.slice(1)] ?? 'resumen'
+  })
   const current = TABS.find((t) => t.id === active) ?? TABS[0]
+  // Algunas secciones (el resumen) pueden pedir que se abra otra.
+  const Panel = current.Panel as ComponentType<{ go?: TabGo }>
 
-  const onKeyDown = (e: KeyboardEvent, index: number) => {
-    const last = TABS.length - 1
-    const to = e.key === 'ArrowRight' ? (index + 1) % TABS.length : e.key === 'ArrowLeft' ? (index - 1 + TABS.length) % TABS.length : e.key === 'Home' ? 0 : e.key === 'End' ? last : null
-    if (to === null) return
-    e.preventDefault()
-    setActive(TABS[to].id)
-    tabRefs.current[to]?.focus()
-  }
+  const items: SidebarItem[] = [
+    ...TABS.map((t) => ({
+      id: t.id,
+      label: t.label,
+      icon: TAB_ICONS[t.id],
+      active: t.id === active,
+      badge: t.id === 'resumen' ? unread : undefined,
+      onSelect: () => setActive(t.id),
+    })),
+    { id: 'portafolio', label: 'Ver portafolio', icon: ExternalLink, to: '/', separator: true },
+    { id: 'salir', label: 'Cerrar sesión', icon: LogOut, danger: true, onSelect: () => void supabase.auth.signOut().then(() => window.location.assign('/')) },
+  ]
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-[var(--border)] bg-[var(--surface)] px-4 py-4 backdrop-blur sm:px-6">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3">
-          <div className="min-w-0 flex-1">
-            <h1 className="font-serif text-3xl font-semibold text-gold">Panel de administración</h1>
-            <p className="break-all text-sm text-[var(--text-muted)]">{userName}</p>
-          </div>
-          <Link to="/" className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--text)] hover:bg-[var(--surface)]">
-            <ExternalLink size={15} aria-hidden /> Ver portafolio
-          </Link>
-          <Button variant="secondary" onClick={() => void supabase.auth.signOut()}>
-            <LogOut size={16} aria-hidden /> Cerrar sesión
-          </Button>
-        </div>
-      </header>
+      <Sidebar label="Menú del panel" subtitle={userName ?? undefined} items={items} brand={<PanelBrand title="Panel" />} footer={<ThemeFooter />} />
 
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-        <div role="tablist" aria-label="Secciones del panel" className="-mx-4 mb-6 flex gap-1.5 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
-          {TABS.map((t, i) => {
-            const on = t.id === active
-            return (
-              <button
-                key={t.id}
-                ref={(el) => {
-                  tabRefs.current[i] = el
-                }}
-                role="tab"
-                id={`tab-${t.id}`}
-                aria-selected={on}
-                aria-controls={`panel-${t.id}`}
-                tabIndex={on ? 0 : -1}
-                onClick={() => setActive(t.id)}
-                onKeyDown={(e) => onKeyDown(e, i)}
-                className={`min-h-11 shrink-0 rounded-full border px-4 py-2 text-sm transition-colors ${
-                  on ? 'border-[#f5b942] bg-[#f5b942] font-semibold text-[#071426]' : 'border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface)]'
-                }`}
-              >
-                {t.label}
-              </button>
-            )
-          })}
-        </div>
+      <div className={`mx-auto max-w-6xl px-4 py-6 sm:px-6 ${SIDEBAR_PAD}`}>
+        <h1 className="font-serif text-3xl font-semibold text-gold">{current.label}</h1>
+        <p className="mb-5 text-xs font-medium uppercase tracking-[0.25em] text-teal">Panel de administración</p>
 
-        <div role="tabpanel" id={`panel-${current.id}`} aria-labelledby={`tab-${current.id}`} tabIndex={0}>
+        <div role="region" aria-label={current.label} tabIndex={0}>
           <Suspense fallback={<p className="py-10 text-center text-[var(--text-muted)]">Cargando…</p>}>
-            <current.Panel />
+            <Panel go={setActive} />
           </Suspense>
         </div>
       </div>
@@ -126,21 +143,31 @@ export default function AdminPage() {
   }
 
   if (isAdmin) return <AdminShell />
-  if (role === 'member') {
+  // Colaboradores: panel sencillo, sin ninguna herramienta administrativa. Las demás cuentas no entran.
+  if (role === 'collaborator') {
     return (
       <Suspense fallback={<Loading />}>
-        <MemberHome />
+        <CollaboratorHome />
       </Suspense>
     )
   }
 
   return (
-    <main className="grid min-h-screen place-items-center px-4 text-center">
+    <main className={`grid min-h-screen place-items-center px-4 text-center ${SIDEBAR_PAD}`}>
+      <Sidebar
+        label="Menú de mi cuenta"
+        brand={<PanelBrand title="Mi cuenta" />}
+        footer={<ThemeFooter />}
+        items={[
+          { id: 'portafolio', label: 'Ver portafolio', icon: ExternalLink, to: '/' },
+          { id: 'salir', label: 'Cerrar sesión', icon: LogOut, danger: true, separator: true, onSelect: () => void supabase.auth.signOut().then(() => window.location.assign('/')) },
+        ]}
+      />
       <div className="max-w-md space-y-4">
         <ShieldAlert className="mx-auto text-[#f5b942]" size={44} aria-hidden />
         <h1 className="font-serif text-3xl font-semibold text-gold">Tu cuenta no tiene permisos</h1>
         <p className="text-[var(--text-muted)]">Pide a la administradora que registre tu correo en el panel y vuelve a entrar.</p>
-        <Button variant="secondary" onClick={() => void supabase.auth.signOut()}>
+        <Button variant="secondary" onClick={() => void supabase.auth.signOut().then(() => window.location.assign('/'))}>
           Cerrar sesión
         </Button>
       </div>

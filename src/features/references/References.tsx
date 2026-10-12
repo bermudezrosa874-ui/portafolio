@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { BookMarked, Check, Copy, Search } from 'lucide-react'
+import { BookMarked, BookOpen, Check, Copy, Search } from 'lucide-react'
 import { EmptyState } from '../../components/EmptyState'
 import { SectionHeading } from '../../components/SectionHeading'
 import { compareApa, parseApa, REF_KIND_LABEL, stripMarkers, type RefKind } from '../../lib/apa'
@@ -87,7 +87,7 @@ export function References() {
             onClick={() => setOpen((o) => !o)}
             className="inline-flex items-center gap-2 rounded-full bg-[#f5b942] px-7 py-3.5 text-base font-semibold text-[#071426] shadow-[0_8px_30px_-8px_rgba(245,185,66,0.7)] transition-transform active:scale-95"
           >
-            <span aria-hidden>📚</span> {open ? 'Ocultar referencias' : 'Consultar referencias'}
+            <BookOpen size={18} aria-hidden /> {open ? 'Ocultar referencias' : 'Consultar referencias'}
           </button>
         </div>
 
@@ -159,7 +159,7 @@ export function References() {
                               type="button"
                               onClick={() => copy(r.id, r.apa_text)}
                               aria-label={copied === r.id ? 'Referencia copiada' : 'Copiar referencia'}
-                              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface)]"
+                              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[var(--border)] text-[var(--text)] hover:bg-[var(--hover)]"
                             >
                               {copied === r.id ? <Check size={17} aria-hidden className="text-emerald-500" /> : <Copy size={17} aria-hidden />}
                             </button>

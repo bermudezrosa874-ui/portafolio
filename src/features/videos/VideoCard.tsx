@@ -22,7 +22,7 @@ export function VideoCard({ video, phaseLabel }: { video: Video; phaseLabel: str
   const behind = BEHIND_LABELS.filter(([k]) => video.behind_scenes?.[k]?.trim())
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-white/10 bg-[#0b1220]">
+    <article className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
       <div className="relative aspect-video bg-black">
         {playing && src ? (
           <SafeFrame src={src} title={`Video: ${video.title}`} />
@@ -79,22 +79,22 @@ export function VideoCard({ video, phaseLabel }: { video: Video; phaseLabel: str
         )}
       </div>
 
-      <div className="space-y-3 p-5 text-slate-200">
+      <div className="space-y-3 p-5 text-[var(--viewer-text)]">
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          {phaseLabel && <span className="rounded-full bg-teal/20 px-2.5 py-0.5 font-medium text-[#67e8f9]">{phaseLabel}</span>}
-          {info.valid && <span className="rounded-full bg-white/10 px-2.5 py-0.5">{PLATFORM_LABEL[info.platform]}</span>}
+          {phaseLabel && <span className="rounded-full bg-teal/20 px-2.5 py-0.5 font-medium text-teal">{phaseLabel}</span>}
+          {info.valid && <span className="rounded-full bg-[var(--viewer-hover)] px-2.5 py-0.5">{PLATFORM_LABEL[info.platform]}</span>}
         </div>
-        <h3 className="font-serif text-2xl font-semibold text-slate-50">{video.title}</h3>
+        <h3 className="font-serif text-2xl font-semibold text-[var(--viewer-text)]">{video.title}</h3>
         {video.participants && (
           <p className="text-sm">
-            <span className="text-slate-400">Participantes: </span>
+            <span className="text-[var(--viewer-muted)]">Participantes: </span>
             {video.participants}
           </p>
         )}
-        {video.description && <p className="leading-relaxed text-slate-300">{video.description}</p>}
+        {video.description && <p className="leading-relaxed text-[var(--viewer-muted)]">{video.description}</p>}
         {video.credits && (
           <p className="text-sm">
-            <span className="text-slate-400">Créditos: </span>
+            <span className="text-[var(--viewer-muted)]">Créditos: </span>
             {video.credits}
           </p>
         )}
@@ -106,15 +106,15 @@ export function VideoCard({ video, phaseLabel }: { video: Video; phaseLabel: str
             onToggle={() => setBehindOpen((o) => !o)}
             headingLevel={4}
             accent="#f5b942"
-            className="rounded-xl border border-white/10 bg-white/5"
+            className="rounded-xl border border-[var(--border)] bg-[var(--viewer-hover)]"
             buttonClassName="p-3.5"
-            header={<span className="font-serif text-lg font-semibold text-[#f5b942]">Detrás de la entrevista</span>}
+            header={<span className="font-serif text-lg font-semibold text-gold">Detrás de la entrevista</span>}
           >
             <dl className="space-y-3 px-4 pb-4">
               {behind.map(([key, label]) => (
                 <div key={key}>
-                  <dt className="text-[11px] uppercase tracking-widest text-slate-400">{label}</dt>
-                  <dd className="mt-0.5 leading-relaxed text-slate-200">{video.behind_scenes[key]}</dd>
+                  <dt className="text-[11px] uppercase tracking-widest text-[var(--viewer-muted)]">{label}</dt>
+                  <dd className="mt-0.5 leading-relaxed text-[var(--viewer-text)]">{video.behind_scenes[key]}</dd>
                 </div>
               ))}
             </dl>

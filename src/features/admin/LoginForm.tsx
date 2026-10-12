@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { z } from '../../lib/zod'
 import { Eye, EyeOff, KeyRound } from 'lucide-react'
 import { Button, Notice, TextField } from '../../components/ui/forms'
+import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { useToast } from '../../components/ui/Toast'
 import { ARRIVED_ERROR } from '../../lib/authHash'
 import { readFlag, removeFlag } from '../../lib/safeStorage'
@@ -14,16 +15,17 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Escribe tu contraseña.'),
 })
 
-function Shell({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+function Shell({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <main className="grid min-h-screen place-items-center px-4 py-12">
+    <main className="relative grid min-h-screen place-items-center px-4 py-12">
+      <ThemeToggle className="absolute right-4 top-4" />
       <div className="w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-7 shadow-xl backdrop-blur sm:p-9">
         <div className="mb-6 text-center">
           <span aria-hidden className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[#f5b942] font-serif text-3xl font-semibold text-[#071426]">
             π
           </span>
           <h1 className="mt-4 font-serif text-4xl font-semibold text-gold">{title}</h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">{subtitle}</p>
+          {subtitle && <p className="mt-1 text-sm text-[var(--text-muted)]">{subtitle}</p>}
         </div>
         {children}
         <p className="mt-6 text-center text-sm">
@@ -43,7 +45,6 @@ export function LoginForm() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
   const [serverError, setServerError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [resetInfo, setResetInfo] = useState<string | null>(null)
   // Si la sesión se cerró por inactividad, se avisa una sola vez.
   const [idle] = useState(() => {
     const was = readFlag(IDLE_FLAG) === '1'
@@ -54,7 +55,6 @@ export function LoginForm() {
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     setServerError(null)
-    setResetInfo(null)
     const parsed = loginSchema.safeParse({ email, password })
     if (!parsed.success) {
       const f = parsed.error.flatten().fieldErrors
@@ -76,21 +76,8 @@ export function LoginForm() {
     }
   }
 
-  const forgot = async () => {
-    setServerError(null)
-    const parsed = z.string().trim().email().safeParse(email)
-    if (!parsed.success) {
-      setErrors({ email: 'Escribe tu correo arriba para enviarte el enlace.' })
-      return
-    }
-    setErrors({})
-    await supabase.auth.resetPasswordForEmail(parsed.data, { redirectTo: `${window.location.origin}/admin` })
-    // Mismo mensaje exista o no la cuenta: no se revela quién tiene cuenta.
-    setResetInfo('Si ese correo tiene una cuenta, te enviamos un enlace para crear una contraseña nueva.')
-  }
-
   return (
-    <Shell title="Modo edición" subtitle="Solo para integrantes del grupo. Las cuentas se crean por invitación.">
+    <Shell title="Espacio de editores">
       <form onSubmit={submit} noValidate className="space-y-4">
         {idle && <Notice tone="warn">Tu sesión se cerró por inactividad. Vuelve a iniciar sesión.</Notice>}
         {ARRIVED_ERROR && <Notice tone="warn">{ARRIVED_ERROR}. Pide un enlace nuevo y ábrelo de nuevo.</Notice>}
@@ -121,15 +108,9 @@ export function LoginForm() {
             {serverError}
           </p>
         )}
-        {resetInfo && <Notice>{resetInfo}</Notice>}
         <Button type="submit" loading={loading} className="w-full">
           Entrar
         </Button>
-        <p className="text-center text-sm">
-          <button type="button" onClick={forgot} className="text-teal underline underline-offset-4">
-            Olvidé mi contraseña
-          </button>
-        </p>
       </form>
     </Shell>
   )
@@ -151,9 +132,10 @@ export function SetPasswordForm({
   onDone: () => void
 }) {
   const toast = useToast()
+  const [current, setCurrent] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
-  const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({})
+  const [errors, setErrors] = useState<{ current?: string; password?: string; confirm?: string }>({})
   const [serverError, setServerError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -161,14 +143,34 @@ export function SetPasswordForm({
     e.preventDefault()
     setServerError(null)
     const parsed = passwordSchema.safeParse({ password, confirm })
-    if (!parsed.success) {
-      const f = parsed.error.flatten().fieldErrors
-      setErrors({ password: f.password?.[0], confirm: f.confirm?.[0] })
+    const needsCurrent = mode === 'change'
+    if (!parsed.success || (needsCurrent && !current)) {
+      const f = parsed.success ? {} : parsed.error.flatten().fieldErrors
+      setErrors({
+        current: needsCurrent && !current ? 'Escribe tu contraseña actual.' : undefined,
+        password: 'password' in f ? f.password?.[0] : undefined,
+        confirm: 'confirm' in f ? f.confirm?.[0] : undefined,
+      })
+      return
+    }
+    if (needsCurrent && current === password) {
+      setErrors({ password: 'La contraseña nueva debe ser distinta de la actual.' })
       return
     }
     setErrors({})
     setLoading(true)
-    const { error } = await supabase.auth.updateUser({ password: parsed.data.password })
+    if (needsCurrent) {
+      // Se comprueba la contraseña actual antes de permitir el cambio.
+      const { data } = await supabase.auth.getUser()
+      const email = data.user?.email
+      const check = email ? await supabase.auth.signInWithPassword({ email, password: current }) : { error: new Error('sin sesión') }
+      if (check.error) {
+        setLoading(false)
+        setErrors({ current: 'La contraseña actual no es correcta.' })
+        return
+      }
+    }
+    const { error } = await supabase.auth.updateUser({ password: parsed.data!.password })
     setLoading(false)
     if (error) {
       setServerError(
@@ -192,6 +194,9 @@ export function SetPasswordForm({
 
   const form = (
     <form onSubmit={submit} noValidate className="space-y-4">
+      {mode === 'change' && (
+        <TextField label="Contraseña actual" type="password" value={current} onChange={setCurrent} error={errors.current} autoComplete="current-password" required />
+      )}
       <TextField label="Contraseña nueva" type="password" value={password} onChange={setPassword} error={errors.password} hint="Mínimo 10 caracteres." autoComplete="new-password" required />
       <TextField label="Repite la contraseña" type="password" value={confirm} onChange={setConfirm} error={errors.confirm} autoComplete="new-password" required />
       {serverError && (

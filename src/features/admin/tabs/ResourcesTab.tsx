@@ -32,13 +32,13 @@ function urlErrorOf(url: string): string | undefined {
   return resolveEmbed(url).valid ? undefined : 'El enlace no es válido: debe empezar por https://.'
 }
 
-function TimelineEditor({ row }: { row: Row | undefined }) {
+function TimelineEditor({ row, defaultPublished }: { row: Row | undefined; defaultPublished: boolean }) {
   const confirm = useConfirm()
   const refresh = useRefresh()
   const { busy, run } = useAction()
   const [title, setTitle] = useState(row?.title ?? 'Línea de tiempo')
   const [url, setUrl] = useState(row?.url ?? '')
-  const [published, setPublished] = useState(row?.published ?? false)
+  const [published, setPublished] = useState(row?.published ?? defaultPublished)
   const [touched, setTouched] = useState(false)
   const urlError = touched ? urlErrorOf(url) : undefined
 
@@ -91,7 +91,7 @@ function TimelineEditor({ row }: { row: Row | undefined }) {
   )
 }
 
-function ResourceForm({ initial, nextPosition, phases, onClose }: { initial: Row | null; nextPosition: number; phases: Phase[]; onClose: () => void }) {
+function ResourceForm({ initial, nextPosition, phases, onClose, defaultPublished, taken }: { initial: Row | null; nextPosition: number; phases: Phase[]; onClose: () => void; defaultPublished: boolean; taken: Record<number, string> }) {
   const refresh = useRefresh()
   const { busy, run } = useAction()
   const [f, setF] = useState({
@@ -101,7 +101,7 @@ function ResourceForm({ initial, nextPosition, phases, onClose }: { initial: Row
     description: initial?.description ?? '',
     phase_id: initial?.phase_id ? String(initial.phase_id) : '',
     cover_path: initial?.cover_path ?? null,
-    published: initial?.published ?? false,
+    published: initial?.published ?? defaultPublished,
   })
   const [touched, setTouched] = useState(false)
   const [progress, setProgress] = useState<number | null>(null)
@@ -130,7 +130,7 @@ function ResourceForm({ initial, nextPosition, phases, onClose }: { initial: Row
   const save = async () => {
     setTouched(true)
     const info = resolveEmbed(f.url)
-    if (!f.title.trim() || !info.valid) return
+    if (!f.title.trim() || !info.valid || !f.phase_id) return
     const payload = {
       kind: f.kind,
       title: f.title.trim(),
@@ -155,7 +155,13 @@ function ResourceForm({ initial, nextPosition, phases, onClose }: { initial: Row
   }
 
   const info = resolveEmbed(f.url)
-  const phaseOptions = [{ value: '', label: 'Sin fase' }, ...phases.map((p) => ({ value: String(p.id), label: `Fase ${p.id}: ${p.title}` }))]
+  const phaseOptions = [
+    { value: '', label: 'Elige la fase…', disabled: true },
+    ...phases.map((p) => {
+      const busy = !!taken[p.id] && p.id !== initial?.phase_id
+      return { value: String(p.id), label: `Fase ${p.id}: ${p.title}`, busy }
+    }).filter((o) => !o.busy),
+  ]
 
   return (
     <Card className="space-y-4 border-gold/40">
@@ -167,7 +173,7 @@ function ResourceForm({ initial, nextPosition, phases, onClose }: { initial: Row
       <EmbedField label="Enlace del recurso" url={f.url} onUrl={set('url')} />
       {urlError && <p className="text-sm text-red-500">{urlError}</p>}
       <TextArea label="Descripción breve" value={f.description} onChange={set('description')} rows={3} maxLength={500} />
-      <SelectField label="Fase relacionada" value={f.phase_id} onChange={set('phase_id')} options={phaseOptions} />
+      <SelectField label="Fase" value={f.phase_id} onChange={set('phase_id')} options={phaseOptions} required error={touched && !f.phase_id ? 'Elige la fase.' : undefined} hint="Cada fase tiene un solo recurso digital." />
 
       <div className="space-y-2">
         <p className="text-sm font-medium text-[var(--text)]">Portada (opcional)</p>
@@ -210,7 +216,8 @@ function ResourceForm({ initial, nextPosition, phases, onClose }: { initial: Row
   )
 }
 
-export default function ResourcesTab() {
+/** ownerId: modo colaborador (solo ve y maneja lo que subió él). Sin ownerId: Rosa, que maneja todo. */
+export default function ResourcesTab({ ownerId }: { ownerId?: string }) {
   const { data: rows = [], isLoading } = useAdminRows<Row>('resources', [['position', true], ['created_at', true]])
   const { data: phases = [] } = useAdminRows<Phase>('phases')
   const confirm = useConfirm()
@@ -219,7 +226,11 @@ export default function ResourcesTab() {
   const [editing, setEditing] = useState<Row | 'new' | null>(null)
 
   const timeline = rows.find((r) => r.kind === 'timeline')
-  const resources = rows.filter((r) => r.kind !== 'timeline')
+  const resources = rows.filter((r) => r.kind !== 'timeline' && (!ownerId || r.uploaded_by === ownerId))
+  // La línea de tiempo es una sola: un colaborador solo puede cambiarla si la subió él o si todavía no existe.
+  const taken: Record<number, string> = {}
+  for (const r of rows) if (r.kind !== 'timeline' && r.phase_id) taken[r.phase_id] = r.uploaded_by_name || 'otro integrante'
+  const canEditTimeline = !ownerId || !timeline || timeline.uploaded_by === ownerId
   const phaseLabel = (id: number | null) => (id ? `Fase ${id}` : 'Sin fase')
 
   const remove = async (r: Row) => {
@@ -241,7 +252,13 @@ export default function ResourcesTab() {
     <div className="space-y-8">
       <TabIntro title="Línea de tiempo y recursos">Enlaces a recursos interactivos. Se abren incrustados o en una pestaña nueva según la plataforma.</TabIntro>
 
-      {isLoading ? <p className="text-[var(--text-muted)]">Cargando…</p> : <TimelineEditor key={timeline?.id ?? 'none'} row={timeline} />}
+      {isLoading ? (
+        <p className="text-[var(--text-muted)]">Cargando…</p>
+      ) : canEditTimeline ? (
+        <TimelineEditor key={timeline?.id ?? 'none'} row={timeline} defaultPublished={!!ownerId} />
+      ) : (
+        <Notice>La línea de tiempo ya la subió {timeline?.uploaded_by_name || 'otro integrante'}. Solo esa persona o Rosa pueden cambiarla.</Notice>
+      )}
 
       <section aria-labelledby="lista-recursos" className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -257,6 +274,8 @@ export default function ResourcesTab() {
 
         {editing !== null && (
           <ResourceForm
+            taken={taken}
+            defaultPublished={!!ownerId}
             key={editing === 'new' ? 'new' : editing.id}
             initial={editing === 'new' ? null : editing}
             nextPosition={Math.max(0, ...resources.map((r) => r.position)) + 1}

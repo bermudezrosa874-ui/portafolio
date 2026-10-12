@@ -85,17 +85,17 @@ export function Lightbox({ items, index, openedId, members, phases, onIndex, onC
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-[90] flex flex-col bg-black/95 text-slate-100"
+      className="fixed inset-0 z-[90] flex flex-col bg-[var(--viewer-overlay)] text-[var(--viewer-text)]"
     >
       <div className="flex items-center justify-between px-4 py-3">
-        <p className="text-sm tabular-nums text-slate-300" aria-live="polite">
+        <p className="text-sm tabular-nums text-[var(--viewer-muted)]" aria-live="polite">
           {index + 1} / {total}
         </p>
         <button
           type="button"
           onClick={onClose}
           aria-label="Cerrar visor"
-          className="grid h-11 w-11 place-items-center rounded-full hover:bg-white/10"
+          className="grid h-11 w-11 place-items-center rounded-full hover:bg-[var(--viewer-hover)]"
         >
           <X size={24} aria-hidden />
         </button>
@@ -133,27 +133,27 @@ export function Lightbox({ items, index, openedId, members, phases, onIndex, onC
         )}
       </div>
 
-      <div className="max-h-[38vh] overflow-y-auto border-t border-white/10 bg-[#0b1220] px-5 py-4">
+      <div className="max-h-[38vh] overflow-y-auto border-t border-[var(--viewer-line)] bg-[var(--viewer-panel)] px-5 py-4">
         <div className="mx-auto max-w-3xl">
-          <h2 className="font-serif text-2xl font-semibold text-[#f5b942]">{item.title}</h2>
-          <p className="mt-1.5 leading-relaxed text-slate-200">{item.description}</p>
-          <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-slate-300">
+          <h2 className="font-serif text-2xl font-semibold text-gold">{item.title}</h2>
+          <p className="mt-1.5 leading-relaxed text-[var(--viewer-text)]">{item.description}</p>
+          <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-[var(--viewer-muted)]">
             {phase && (
               <li className="inline-flex items-center gap-1.5">
-                <Tag size={14} aria-hidden className="text-[#67e8f9]" /> Fase {phase.id}: {phase.title}
+                <Tag size={14} aria-hidden className="text-teal" /> Fase {phase.id}: {phase.title}
               </li>
             )}
             {names.length > 0 && (
               <li className="inline-flex items-center gap-1.5">
-                <Users size={14} aria-hidden className="text-[#67e8f9]" /> {names.join(', ')}
+                <Users size={14} aria-hidden className="text-teal" /> {names.join(', ')}
               </li>
             )}
             {date && (
               <li className="inline-flex items-center gap-1.5">
-                <CalendarDays size={14} aria-hidden className="text-[#67e8f9]" /> {date}
+                <CalendarDays size={14} aria-hidden className="text-teal" /> {date}
               </li>
             )}
-            <li className="text-slate-400">{CATEGORY_LABEL[item.category]}</li>
+            <li className="text-[var(--viewer-muted)]">{CATEGORY_LABEL[item.category]}</li>
           </ul>
         </div>
       </div>
