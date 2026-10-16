@@ -6,6 +6,7 @@ import { SortableList } from '../../../components/ui/SortableList'
 import { useConfirm } from '../../../components/ui/Confirm'
 import { resolveEmbed } from '../../../lib/embed'
 import { validateImage } from '../../../lib/fileValidation'
+import { isPhaseLocked } from '../../../lib/phases'
 import { processSingle } from '../../../lib/image'
 import { publicUrl } from '../../../lib/upload'
 import {
@@ -159,7 +160,8 @@ function ResourceForm({ initial, nextPosition, phases, onClose, defaultPublished
     { value: '', label: 'Elige la fase…', disabled: true },
     ...phases.map((p) => {
       const busy = !!taken[p.id] && p.id !== initial?.phase_id
-      return { value: String(p.id), label: `Fase ${p.id}: ${p.title}`, busy }
+      const locked = isPhaseLocked(p)
+      return { value: String(p.id), label: `Fase ${p.id}: ${p.title}${locked ? ' (cerrada)' : ''}`, busy, disabled: locked }
     }).filter((o) => !o.busy),
   ]
 

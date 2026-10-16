@@ -30,6 +30,9 @@ export function useSession() {
   return { session, ready }
 }
 
+/** Dirección del panel de cada quien: la administradora entra por /admin y los colaboradores por /colaborador. */
+export const panelPath = (role: 'admin' | 'collaborator' | 'user' | null | undefined) => (role === 'collaborator' ? '/colaborador' : '/admin')
+
 /** Rol del usuario con sesión: 'admin' (la administradora), 'collaborator', 'user' o null (visitante). La RLS es la defensa real. */
 export function useRole() {
   const { session, ready } = useSession()

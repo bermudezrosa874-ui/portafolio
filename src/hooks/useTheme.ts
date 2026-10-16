@@ -4,7 +4,8 @@ import { THEME_KEY, readFlag, writeFlag } from '../lib/safeStorage'
 export type Theme = 'dark' | 'light'
 
 export function initialTheme(): Theme {
-  return readFlag(THEME_KEY) === 'light' ? 'light' : 'dark'
+  // El portafolio abre en claro; solo queda en oscuro si la persona lo eligió con el botón de tema.
+  return readFlag(THEME_KEY) === 'dark' ? 'dark' : 'light'
 }
 
 // Un solo estado compartido: todos los botones de tema (portafolio, panel de la administradora, colaboradores,

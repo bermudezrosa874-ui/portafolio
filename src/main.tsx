@@ -14,7 +14,7 @@ import { ConfirmProvider } from './components/ui/Confirm'
 import { ToastProvider } from './components/ui/Toast'
 
 // En /admin no hay portada: la estática del HTML se quita para que no quede visible detrás del panel.
-if (window.location.pathname.startsWith('/admin')) document.getElementById('prerender')?.remove()
+if (/^\/(admin|colaborador)/.test(window.location.pathname)) document.getElementById('prerender')?.remove()
 
 // Si el HTML trae la portada ya pintada, React la reemplaza sin animarla (para que no parpadee).
 ;(window as unknown as { __prerendered?: boolean }).__prerendered = !!document.getElementById('prerender')

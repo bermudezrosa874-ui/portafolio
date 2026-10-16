@@ -47,6 +47,8 @@ export interface Phase {
   position: number
   /** La fase se dio por completa: ya no acepta subidas nuevas (la administradora puede reabrirla). */
   uploads_closed?: boolean
+  /** Día (AAAA-MM-DD, hora de Bogotá) en que se abre la fase; antes de esa fecha está cerrada para todos. */
+  opens_at?: string | null
 }
 
 export interface Deliverable {

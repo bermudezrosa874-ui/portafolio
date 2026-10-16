@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Lock, Trash2 } from 'lucide-react'
 import { AccordionItem } from '../../../components/Accordion'
+import { PhaseLocked } from '../../../components/PhaseLocked'
+import { isPhaseLocked, opensOn } from '../../../lib/phases'
 import { Button, Card, Notice, SelectField, TabIntro, TextArea, TextField, Toggle } from '../../../components/ui/forms'
 import { useConfirm } from '../../../components/ui/Confirm'
 import { useRole } from '../../../hooks/useAuth'
@@ -27,6 +29,7 @@ function PhaseEditor({ phase, deliverable }: { phase: Phase; deliverable: Delive
     description: phase.description,
     start_date: phase.start_date ?? '',
     end_date: phase.end_date ?? '',
+    opens_at: phase.opens_at ?? '',
     status: phase.status as PhaseStatus,
     que_aprendimos: phase.que_aprendimos,
   })
@@ -46,6 +49,7 @@ function PhaseEditor({ phase, deliverable }: { phase: Phase; deliverable: Delive
         description: f.description,
         start_date: f.start_date || null,
         end_date: f.end_date || null,
+        opens_at: f.opens_at || null,
         status: f.status,
         que_aprendimos: f.que_aprendimos,
       })
@@ -83,6 +87,13 @@ function PhaseEditor({ phase, deliverable }: { phase: Phase; deliverable: Delive
         <TextField label="RAC" value={f.rac} onChange={set('rac')} hint="Resultado de aprendizaje del curso, por ejemplo «RAC 2»." />
         <TextField label="Fecha de inicio" type="date" value={f.start_date} onChange={set('start_date')} />
         <TextField label="Fecha final" type="date" value={f.end_date} onChange={set('end_date')} error={errors.dates} />
+        <TextField
+          label="Se abre el"
+          type="date"
+          value={f.opens_at}
+          onChange={set('opens_at')}
+          hint="Hasta este día (hora de Bogotá) la fase está cerrada para todos. Déjalo vacío para abrirla ya."
+        />
         <SelectField label="Estado" value={f.status} onChange={set('status')} options={STATUS_OPTIONS} />
       </div>
       <TextArea label="Descripción de la actividad" value={f.description} onChange={set('description')} rows={3} />
@@ -113,7 +124,11 @@ function PhaseEditor({ phase, deliverable }: { phase: Phase; deliverable: Delive
         ) : (
           <Notice>Aún no hay documento en esta fase.</Notice>
         )}
-        {session && <PhaseUploader phaseId={phase.id} existing={deliverable} userId={session.user.id} userName={userName} />}
+        {isPhaseLocked(phase) ? (
+          <PhaseLocked phase={phase} compact />
+        ) : (
+          session && <PhaseUploader phaseId={phase.id} existing={deliverable} userId={session.user.id} userName={userName} />
+        )}
       </div>
     </div>
   )
@@ -177,8 +192,16 @@ export default function PhasesTab() {
                     Fase {p.id} – {p.title}
                   </span>
                   <span className="mt-1.5 flex flex-wrap items-center gap-2 text-sm text-[var(--text-muted)]">
-                    <StatusBadge status={p.status} />
-                    <span>{d ? (d.published ? 'Con documento publicado' : 'Documento en borrador') : 'Sin documento'}</span>
+                    {isPhaseLocked(p) ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-0.5 text-xs">
+                        <Lock size={12} aria-hidden /> Cerrada · se abre el {opensOn(p)}
+                      </span>
+                    ) : (
+                      <>
+                        <StatusBadge status={p.status} />
+                        <span>{d ? (d.published ? 'Con documento publicado' : 'Documento en borrador') : 'Sin documento'}</span>
+                      </>
+                    )}
                   </span>
                 </span>
               }

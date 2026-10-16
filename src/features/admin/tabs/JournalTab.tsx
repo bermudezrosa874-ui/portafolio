@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Check, Minus, Trash2 } from 'lucide-react'
+import { Check, Lock, Minus, Trash2 } from 'lucide-react'
 import { Button, Card, Notice, TabIntro } from '../../../components/ui/forms'
 import { useConfirm } from '../../../components/ui/Confirm'
+import { isPhaseLocked } from '../../../lib/phases'
 import { useAction, useAdminRows, useRefresh, deleteRow } from '../adminData'
 import { ReflectionEditor } from '../../journal/ReflectionEditor'
 import type { Member, Phase, Reflection } from '../../../types'
@@ -53,7 +54,8 @@ export default function JournalTab() {
             <tr>
               <th scope="col" className="p-2 text-left font-medium text-[var(--text-muted)]">Integrante</th>
               {phases.map((p) => (
-                <th key={p.id} scope="col" className="p-2 text-center font-medium text-[var(--text-muted)]" title={p.title}>
+                <th key={p.id} scope="col" className="p-2 text-center font-medium text-[var(--text-muted)]" title={isPhaseLocked(p) ? 'Fase cerrada: todavía no se puede escribir' : p.title}>
+                  {isPhaseLocked(p) && <Lock size={12} aria-hidden className="mr-1 inline" />}
                   Fase {p.id}
                 </th>
               ))}
@@ -76,7 +78,8 @@ export default function JournalTab() {
                         onClick={() => setSel({ memberId: m.id, phaseId: p.id })}
                         aria-label={`${plain(m.name)}, fase ${p.id}: reflexión ${state}. Abrir`}
                         aria-pressed={on}
-                        className={`grid h-10 w-full min-w-10 place-items-center rounded-lg border ${
+                        disabled={isPhaseLocked(p)}
+                        className={`grid h-10 w-full min-w-10 place-items-center rounded-lg border disabled:cursor-not-allowed disabled:opacity-40 ${
                           on ? 'border-gold bg-gold/15' : 'border-transparent hover:bg-[var(--hover)]'
                         } ${state === 'completa' ? 'text-emerald-500' : state === 'incompleta' ? 'text-[#f5b942]' : 'text-[var(--text-muted)]'}`}
                       >

@@ -4,6 +4,7 @@ import { Button, Card, Notice, SelectField, TabIntro, TextArea, TextField, Toggl
 import { SortableList } from '../../../components/ui/SortableList'
 import { useConfirm } from '../../../components/ui/Confirm'
 import { PLATFORM_LABEL, resolveEmbed } from '../../../lib/embed'
+import { isPhaseLocked } from '../../../lib/phases'
 import { deleteRow, insertRow, persistOrder, updateRow, useAction, useAdminRows, useRefresh } from '../adminData'
 import { EmbedField, deriveEmbed } from '../EmbedField'
 import { VideoCard } from '../../videos/VideoCard'
@@ -72,7 +73,8 @@ function VideoForm({ initial, nextPosition, phases, onClose, defaultPublished, t
     { value: '', label: 'Elige la fase…', disabled: true },
     ...phases.map((p) => {
       const busy = !!taken[p.id] && p.id !== initial?.phase_id
-      return { value: String(p.id), label: `Fase ${p.id}: ${p.title}`, busy }
+      const locked = isPhaseLocked(p)
+      return { value: String(p.id), label: `Fase ${p.id}: ${p.title}${locked ? ' (cerrada)' : ''}`, busy, disabled: locked }
     }).filter((o) => !o.busy),
   ]
   const previewVideo: Video = {

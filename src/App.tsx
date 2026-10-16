@@ -140,20 +140,24 @@ export default function App() {
 
   // Quien llega desde el enlace de invitación o de recuperación va directo a crear su contraseña.
   useEffect(() => {
-    if (ARRIVED_TYPE && pathname !== '/admin') navigate('/admin', { replace: true })
+    if (ARRIVED_TYPE && pathname !== '/admin' && pathname !== '/colaborador') navigate('/admin', { replace: true })
   }, [pathname, navigate])
 
   return (
     <Routes>
       <Route path="/" element={<Portfolio />} />
-      <Route
-        path="/admin"
-        element={
-          <Suspense fallback={null}>
-            <AdminPage />
-          </Suspense>
-        }
-      />
+      {/* Mismo panel con dos direcciones: AdminPage lleva a cada quien a la suya según su rol. */}
+      {['/admin', '/colaborador'].map((path) => (
+        <Route
+          key={path}
+          path={path}
+          element={
+            <Suspense fallback={null}>
+              <AdminPage />
+            </Suspense>
+          }
+        />
+      ))}
       <Route path="*" element={<Portfolio />} />
     </Routes>
   )

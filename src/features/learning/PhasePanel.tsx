@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Film, Images, NotebookPen, Puzzle, type LucideIcon } from 'lucide-react'
+import { PhaseLocked } from '../../components/PhaseLocked'
 import { SoonText, isSoon } from '../../components/SoonText'
 import { useRole } from '../../hooks/useAuth'
+import { isPhaseLocked } from '../../lib/phases'
 import { ui } from '../../lib/uiStore'
 import type { Deliverable, Moment, Phase, PhaseCounts } from '../../types'
 import { DeliverableCard } from './DeliverableCard'
@@ -39,6 +41,15 @@ export function PhasePanel({ phase, moment, deliverable, counts }: Props) {
   const showDates = isAdmin || !isSoon(dates)
   const showActivity = isAdmin || !isSoon(phase.description)
   const showLearned = isAdmin || !isSoon(phase.que_aprendimos)
+
+  // Fase cerrada: nadie ve ni sube nada hasta su fecha de apertura.
+  if (isPhaseLocked(phase)) {
+    return (
+      <div className="px-1 pb-6 pt-4 sm:px-4">
+        <PhaseLocked phase={phase} />
+      </div>
+    )
+  }
 
   const quick: { label: string; count: number; text: string; icon: LucideIcon; section: string }[] = [
     { label: 'Recursos interactivos', count: counts?.resources ?? 0, text: String(counts?.resources ?? 0), icon: Puzzle, section: 'recursos' },

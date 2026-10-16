@@ -1,13 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Compass, Lightbulb, Mountain, Pencil, Sparkles, type LucideIcon } from 'lucide-react'
+import { Compass, Lightbulb, Lock, Mountain, Pencil, Sparkles, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { FlipCard } from '../../components/FlipCard'
+import { PhaseLocked } from '../../components/PhaseLocked'
 import { Reveal } from '../../components/Reveal'
 import { SectionHeading } from '../../components/SectionHeading'
 import { MemberMini } from '../team/MemberBits'
 import { useRole } from '../../hooks/useAuth'
 import { useLearningData, useMembers, useReflections } from '../../lib/queries'
 import { plainName } from '../../lib/members'
+import { isPhaseLocked, openPhases } from '../../lib/phases'
 import { ui, useUi } from '../../lib/uiStore'
 import type { Reflection } from '../../types'
 import { REFLECTION_FIELDS, ReflectionEditor } from './ReflectionEditor'
@@ -31,6 +33,8 @@ export function Journal() {
 
   const phases = learning?.phases ?? []
   const phaseIds = phases.length ? phases.map((p) => p.id) : [1, 2, 3, 4, 5]
+  // El avance se cuenta solo con las fases que ya abrieron.
+  const openIds = phases.length ? openPhases(phases).map((p) => p.id) : phaseIds
 
   const [memberId, setMemberId] = useState<string | null>(null)
   const [phaseId, setPhaseId] = useState(1)
@@ -40,6 +44,7 @@ export function Journal() {
   // Nadie queda elegido por defecto: el visitante escoge. Con sesión iniciada se preselecciona a quien entró.
   const member = members.find((m) => m.id === memberId)
   const phase = phases.find((p) => p.id === phaseId)
+  const locked = isPhaseLocked(phase)
 
   const myMember = session ? members.find((m) => m.user_id === session.user.id) : undefined
   const preselected = useRef(false)
@@ -73,7 +78,7 @@ export function Journal() {
     return map
   }, [reflections])
 
-  const completedFor = (mId: string) => phaseIds.filter((p) => isComplete(byKey.get(`${mId}:${p}`))).length
+  const completedFor = (mId: string) => openIds.filter((p) => isComplete(byKey.get(`${mId}:${p}`))).length
 
   const current = member ? byKey.get(`${member.id}:${phaseId}`) : undefined
   const canEdit = !!member && !!session && (isAdmin || myMember?.id === member.id)
@@ -106,7 +111,7 @@ export function Journal() {
                 key={m.id}
                 member={m}
                 done={completedFor(m.id)}
-                total={phaseIds.length}
+                total={openIds.length}
                 active={m.id === member?.id}
                 onClick={() => setMemberId(m.id)}
               />
@@ -138,7 +143,9 @@ export function Journal() {
                       : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-gold'
                   }`}
                 >
+                  {isPhaseLocked(phases.find((p) => p.id === id)) && <Lock size={13} aria-hidden className="mr-1 inline" />}
                   Fase {id}
+                  {isPhaseLocked(phases.find((p) => p.id === id)) && <span className="sr-only"> (cerrada)</span>}
                   {done && <span className="sr-only"> (completa)</span>}
                   {done && <span aria-hidden> ✓</span>}
                 </button>
@@ -157,7 +164,7 @@ export function Journal() {
                 {phase && <p className="text-sm text-[var(--text-muted)]">{phase.title}</p>}
               </div>
               <div className="flex flex-wrap gap-2">
-                {!editing && (
+                {!editing && !locked && (
                   <button
                     type="button"
                     onClick={() => setFlips(allFlipped ? [false, false, false, false] : [true, true, true, true])}
@@ -166,7 +173,7 @@ export function Journal() {
                     {allFlipped ? 'Mostrar frentes' : 'Voltear todas'}
                   </button>
                 )}
-                {canEdit && !editing && phase && (
+                {canEdit && !editing && phase && !locked && (
                   <button
                     type="button"
                     onClick={() => setEditing(true)}
@@ -178,7 +185,9 @@ export function Journal() {
               </div>
             </div>
 
-            {editing && phase ? (
+            {locked && phase ? (
+              <PhaseLocked phase={phase} />
+            ) : editing && phase ? (
               <ReflectionEditor member={member} phase={phase} existing={current} onDone={() => setEditing(false)} />
             ) : (
               <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

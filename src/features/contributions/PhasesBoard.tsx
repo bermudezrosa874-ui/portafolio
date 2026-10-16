@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { CheckCircle2, Minus, Plus } from 'lucide-react'
+import { CheckCircle2, Lock, Minus, Plus } from 'lucide-react'
+import { PhaseLocked } from '../../components/PhaseLocked'
 import { TabIntro } from '../../components/ui/forms'
+import { isPhaseLocked, opensOn } from '../../lib/phases'
 import { useLearningData } from '../../lib/queries'
 import { DeliverableCard } from '../learning/DeliverableCard'
 import { PhaseSlots, type PanelTarget } from '../learning/PhaseSlots'
@@ -29,6 +31,7 @@ export function PhasesBoard({ go }: { go: (target: PanelTarget) => void }) {
           const deliverable = learning?.deliverables.find((d) => d.phase_id === p.id)
           const on = open === p.id
           const color = colorOf(p.moment_id)
+          const locked = isPhaseLocked(p)
           return (
             <li key={p.id} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
               <button
@@ -42,8 +45,16 @@ export function PhasesBoard({ go }: { go: (target: PanelTarget) => void }) {
                     Fase {p.id} – {p.title}
                   </span>
                   <span className="mt-1.5 flex flex-wrap items-center gap-2 text-sm text-[var(--text-muted)]">
-                    <StatusBadge status={p.status} />
-                    <span>{deliverable ? `Documento de ${deliverable.uploaded_by_name || 'un integrante'}` : 'Sin documento'}</span>
+                    {locked ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-0.5 text-xs">
+                        <Lock size={12} aria-hidden /> Cerrada · se abre el {opensOn(p)}
+                      </span>
+                    ) : (
+                      <>
+                        <StatusBadge status={p.status} />
+                        <span>{deliverable ? `Documento de ${deliverable.uploaded_by_name || 'un integrante'}` : 'Sin documento'}</span>
+                      </>
+                    )}
                     {p.uploads_closed && (
                       <span className="inline-flex items-center gap-1 text-emerald-500">
                         <CheckCircle2 size={14} aria-hidden /> Completa
@@ -56,7 +67,13 @@ export function PhasesBoard({ go }: { go: (target: PanelTarget) => void }) {
                 </span>
               </button>
 
-              {on && (
+              {on && locked && (
+                <div className="border-t border-[var(--border)] p-5">
+                  <PhaseLocked phase={p} />
+                </div>
+              )}
+
+              {on && !locked && (
                 <div className="space-y-5 border-t border-[var(--border)] p-5">
                   {deliverable && (
                     <div className="space-y-2">

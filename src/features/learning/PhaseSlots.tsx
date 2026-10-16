@@ -133,7 +133,7 @@ export function PhaseSlots({ phase, deliverable, go }: { phase: Phase; deliverab
                   Subir
                 </button>
               ) : (
-                <Link to={`/admin#${s.target}`} className={action}>
+                <Link to={`${isAdmin ? '/admin' : '/colaborador'}#${s.target}`} className={action}>
                   Subir
                 </Link>
               )

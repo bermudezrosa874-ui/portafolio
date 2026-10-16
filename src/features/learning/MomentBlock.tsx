@@ -1,4 +1,6 @@
+import { Lock } from 'lucide-react'
 import { AccordionItem } from '../../components/Accordion'
+import { isPhaseLocked, opensOn } from '../../lib/phases'
 import { ui, useUi } from '../../lib/uiStore'
 import type { Deliverable, Moment, Phase, PhaseCounts } from '../../types'
 import { PhasePanel } from './PhasePanel'
@@ -61,7 +63,13 @@ export function MomentBlock({ moment, phases, deliverables, counts }: Props) {
                     <span className="font-medium" style={{ color: `color-mix(in srgb, ${moment.color} 55%, var(--text))` }}>
                       {phase.rac}
                     </span>
-                    <StatusBadge status={phase.status} />
+                    {isPhaseLocked(phase) ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] px-2.5 py-0.5 text-xs text-[var(--text-muted)]">
+                        <Lock size={12} aria-hidden /> Cerrada · se abre el {opensOn(phase)}
+                      </span>
+                    ) : (
+                      <StatusBadge status={phase.status} />
+                    )}
                   </span>
                 </span>
               }

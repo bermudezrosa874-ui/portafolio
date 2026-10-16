@@ -1,3 +1,5 @@
+import { Lock } from 'lucide-react'
+import { isPhaseLocked, opensOn } from '../lib/phases'
 import { useLearningData } from '../lib/queries'
 import { ui, useUi } from '../lib/uiStore'
 
@@ -27,18 +29,24 @@ export function PhaseFilterBar({ available, dark = false }: Props) {
       <button type="button" aria-pressed={phaseFilter === null} className={chip(phaseFilter === null)} onClick={() => ui.setPhaseFilter(null)}>
         Todas las fases
       </button>
-      {phases.map((p) => (
-        <button
-          key={p.id}
-          type="button"
-          title={p.title}
-          aria-pressed={phaseFilter === p.id}
-          className={chip(phaseFilter === p.id)}
-          onClick={() => ui.setPhaseFilter(phaseFilter === p.id ? null : p.id)}
-        >
-          Fase {p.id}
-        </button>
-      ))}
+      {phases.map((p) => {
+        const locked = isPhaseLocked(p)
+        return (
+          <button
+            key={p.id}
+            type="button"
+            title={locked ? `Cerrada, se abre el ${opensOn(p)}` : p.title}
+            aria-pressed={phaseFilter === p.id}
+            disabled={locked}
+            className={`${chip(phaseFilter === p.id)} disabled:cursor-not-allowed disabled:opacity-50`}
+            onClick={() => ui.setPhaseFilter(phaseFilter === p.id ? null : p.id)}
+          >
+            {locked && <Lock size={13} aria-hidden className="mr-1 inline" />}
+            Fase {p.id}
+            {locked && <span className="sr-only"> (cerrada)</span>}
+          </button>
+        )
+      })}
     </div>
   )
 }

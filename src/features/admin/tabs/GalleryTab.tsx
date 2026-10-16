@@ -8,6 +8,7 @@ import { useToast } from '../../../components/ui/Toast'
 import { useRole } from '../../../hooks/useAuth'
 import { validateImage } from '../../../lib/fileValidation'
 import { processWithThumb } from '../../../lib/image'
+import { isPhaseLocked } from '../../../lib/phases'
 import { publicUrl } from '../../../lib/upload'
 import { deleteRow, dropFile, insertRow, persistOrder, updateRow, uploadImage, useAction, useAdminRows, useRefresh } from '../adminData'
 import { CATEGORY_LABEL } from '../../gallery/Lightbox'
@@ -49,7 +50,7 @@ function FieldsEditor({
   errors?: { title?: string; description?: string }
 }) {
   const set = <K extends keyof Fields>(k: K) => (v: Fields[K]) => onChange({ ...value, [k]: v })
-  const phaseOptions = [{ value: '', label: 'Sin fase' }, ...phases.map((p) => ({ value: String(p.id), label: `Fase ${p.id}: ${p.title}` }))]
+  const phaseOptions = [{ value: '', label: 'Sin fase' }, ...phases.map((p) => ({ value: String(p.id), label: `Fase ${p.id}: ${p.title}${isPhaseLocked(p) ? ' (cerrada)' : ''}`, disabled: isPhaseLocked(p) }))]
   return (
     <div className="space-y-3">
       <TextField label="Título" value={value.title} onChange={set('title')} error={errors?.title} required maxLength={150} />

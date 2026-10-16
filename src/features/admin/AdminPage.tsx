@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, type ComponentType } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import {
   BookOpen,
   ClipboardList,
@@ -130,6 +130,7 @@ export default function AdminPage() {
   const { session, ready } = useSession()
   const { role, roleLoading, isAdmin } = useRole()
   const navigate = useNavigate()
+  const { pathname, hash } = useLocation()
   const [, force] = useState(0)
 
   if (!ready || (session && roleLoading)) return <Loading />
@@ -147,6 +148,10 @@ export default function AdminPage() {
       />
     )
   }
+
+  // Cada quien ve la dirección de su panel: /admin para la administradora y /colaborador para los colaboradores.
+  if (isAdmin && pathname !== '/admin') return <Navigate to={{ pathname: '/admin', hash }} replace />
+  if (role === 'collaborator' && pathname !== '/colaborador') return <Navigate to={{ pathname: '/colaborador', hash }} replace />
 
   if (isAdmin) return <AdminShell />
   // Colaboradores: panel sencillo, sin ninguna herramienta administrativa. Las demás cuentas no entran.

@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react'
 import { BookOpen, Clapperboard, FolderHeart, GraduationCap, History, Home, Image, Info, LayoutDashboard, Library, LogIn, Map, Puzzle, Users, type LucideIcon } from 'lucide-react'
 import { SECTIONS, scrollToSection } from '../../lib/sections'
-import { useSession } from '../../hooks/useAuth'
+import { panelPath, useRole } from '../../hooks/useAuth'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { Sidebar, type SidebarItem } from './Sidebar'
 
@@ -22,7 +22,7 @@ const ICONS: Record<string, LucideIcon> = {
 
 /** Navegación del portafolio: sidebar a la izquierda. */
 export function Nav({ active }: { active: string }) {
-  const { session } = useSession()
+  const { session, role } = useRole()
 
   const go = (e: MouseEvent, id: string) => {
     e.preventDefault()
@@ -38,7 +38,7 @@ export function Nav({ active }: { active: string }) {
       active: active === s.id,
       onSelect: (e: MouseEvent) => go(e, s.id),
     })),
-    { id: 'cuenta', label: session ? 'Mi panel' : 'Iniciar sesión', icon: session ? LayoutDashboard : LogIn, to: '/admin', separator: true },
+    { id: 'cuenta', label: session ? 'Mi panel' : 'Iniciar sesión', icon: session ? LayoutDashboard : LogIn, to: panelPath(role), separator: true },
   ]
 
   return (

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
+import { Lock } from 'lucide-react'
 import { SectionHeading } from '../../components/SectionHeading'
+import { isPhaseLocked, opensOn } from '../../lib/phases'
 import { useLearningData } from '../../lib/queries'
 import { ui } from '../../lib/uiStore'
 import type { Moment, Phase } from '../../types'
@@ -41,13 +43,14 @@ function Stop({ phase, moment, x, y, threshold, progress }: StopProps) {
   const lit = useTransform(progress, [Math.max(threshold - 0.06, 0), threshold], [0.45, 1])
   const color = moment?.color ?? '#F5B942'
   const side: 'left' | 'right' = x > 60 ? 'left' : 'right'
+  const locked = isPhaseLocked(phase)
 
   return (
     <div className="absolute" style={{ left: `${x}%`, top: `${y}%` }}>
       <motion.button
         type="button"
         onClick={() => ui.revealPhase(phase.id, phase.moment_id)}
-        aria-label={`Ir a la Fase ${phase.id}: ${phase.title}`}
+        aria-label={locked ? `Fase ${phase.id}: ${phase.title}. Cerrada, se abre el ${opensOn(phase)}` : `Ir a la Fase ${phase.id}: ${phase.title}`}
         style={reduce ? { borderColor: color } : { opacity: lit, borderColor: color }}
         whileHover={{ scale: 1.12 }}
         whileTap={{ scale: 0.94 }}
@@ -58,7 +61,7 @@ function Stop({ phase, moment, x, y, threshold, progress }: StopProps) {
           className="absolute inset-0 -z-10 rounded-full opacity-30 blur-md transition-opacity group-hover:opacity-70"
           style={{ background: color }}
         />
-        {phase.id}
+        {locked ? <Lock size={18} aria-hidden /> : phase.id}
       </motion.button>
       <div
         className={`pointer-events-none absolute top-0 w-[min(38vw,230px)] -translate-y-1/2 ${
@@ -69,6 +72,7 @@ function Stop({ phase, moment, x, y, threshold, progress }: StopProps) {
           Fase {phase.id} · {phase.rac}
         </p>
         <p className="mt-0.5 font-serif text-base leading-snug text-[var(--text)] sm:text-lg">{phase.title}</p>
+        {locked && <p className="mt-1 text-xs font-medium text-[var(--text-muted)]">Cerrada · se abre el {opensOn(phase)}</p>}
       </div>
     </div>
   )

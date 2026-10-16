@@ -2,6 +2,7 @@
 // (lo publicado + las reflexiones). No hay puntajes: son conteos y fechas reales.
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { openPhases } from '../../lib/phases'
 import { useGroupEntries, useLearningData, useMembers } from '../../lib/queries'
 import type { GroupCard, GroupEntry, Member } from '../../types'
 
@@ -136,7 +137,8 @@ export function useParticipation() {
   const { data: learning } = useLearningData()
   const { data: groupEntries = [] } = useGroupEntries()
   const { data: raw, isLoading } = useParticipationData()
-  const phaseTotal = learning?.phases.length || 5
+  // El avance de la bitácora se cuenta solo con las fases que ya abrieron.
+  const phaseTotal = openPhases(learning?.phases ?? []).length || 5
 
   const stats = useMemo(() => {
     const items = raw?.items ?? []

@@ -4,6 +4,7 @@ import { Dropzone } from '../../components/ui/Dropzone'
 import { Button, Card, SelectField, TextArea, TextField } from '../../components/ui/forms'
 import { friendlyError } from '../admin/adminData'
 import { useToast } from '../../components/ui/Toast'
+import { isPhaseLocked } from '../../lib/phases'
 import { useLearningData } from '../../lib/queries'
 import { createContribution, reviewContribution, updateContribution, useRefreshContributions } from './api'
 import {
@@ -174,7 +175,13 @@ export function ContributionForm({ userId, isAdmin, initial, defaultPhase, onDon
           label="Fase relacionada"
           value={phase}
           onChange={setPhase}
-          options={[{ value: '', label: 'Ninguna' }, ...(learning?.phases ?? []).map((p) => ({ value: String(p.id), label: `Fase ${p.id}` }))]}
+          options={[
+            { value: '', label: 'Ninguna' },
+            ...(learning?.phases ?? []).map((p) => {
+              const locked = isPhaseLocked(p)
+              return { value: String(p.id), label: locked ? `Fase ${p.id} (cerrada)` : `Fase ${p.id}`, disabled: locked }
+            }),
+          ]}
         />
       </div>
 
