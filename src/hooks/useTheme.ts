@@ -7,7 +7,7 @@ export function initialTheme(): Theme {
   return readFlag(THEME_KEY) === 'light' ? 'light' : 'dark'
 }
 
-// Un solo estado compartido: todos los botones de tema (portafolio, panel de Rosa, colaboradores,
+// Un solo estado compartido: todos los botones de tema (portafolio, panel de la administradora, colaboradores,
 // inicio de sesión) se mantienen sincronizados y el cambio se recuerda entre páginas.
 let current: Theme = initialTheme()
 const listeners = new Set<() => void>()

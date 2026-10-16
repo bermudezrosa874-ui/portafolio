@@ -216,7 +216,7 @@ function ResourceForm({ initial, nextPosition, phases, onClose, defaultPublished
   )
 }
 
-/** ownerId: modo colaborador (solo ve y maneja lo que subió él). Sin ownerId: Rosa, que maneja todo. */
+/** ownerId: modo colaborador (solo ve y maneja lo que subió él). Sin ownerId: la administradora, que maneja todo. */
 export default function ResourcesTab({ ownerId }: { ownerId?: string }) {
   const { data: rows = [], isLoading } = useAdminRows<Row>('resources', [['position', true], ['created_at', true]])
   const { data: phases = [] } = useAdminRows<Phase>('phases')
@@ -257,7 +257,7 @@ export default function ResourcesTab({ ownerId }: { ownerId?: string }) {
       ) : canEditTimeline ? (
         <TimelineEditor key={timeline?.id ?? 'none'} row={timeline} defaultPublished={!!ownerId} />
       ) : (
-        <Notice>La línea de tiempo ya la subió {timeline?.uploaded_by_name || 'otro integrante'}. Solo esa persona o Rosa pueden cambiarla.</Notice>
+        <Notice>La línea de tiempo ya la subió {timeline?.uploaded_by_name || 'otro integrante'}. Solo esa persona o la administradora pueden cambiarla.</Notice>
       )}
 
       <section aria-labelledby="lista-recursos" className="space-y-4">

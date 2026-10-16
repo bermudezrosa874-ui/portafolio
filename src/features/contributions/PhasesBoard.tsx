@@ -65,7 +65,7 @@ export function PhasesBoard({ go }: { go: (target: PanelTarget) => void }) {
                     </div>
                   )}
                   <PhaseSlots phase={p} deliverable={deliverable} go={go} />
-                  {p.uploads_closed && <p className="text-sm text-[var(--text-muted)]">Esta fase está completa. Si falta algo, pídele a Rosa que la reabra.</p>}
+                  {p.uploads_closed && <p className="text-sm text-[var(--text-muted)]">Esta fase está completa. Si falta algo, pídele a la administradora que la reabra.</p>}
                 </div>
               )}
             </li>

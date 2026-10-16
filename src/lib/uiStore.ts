@@ -9,9 +9,11 @@ interface UiState {
   openPhases: number[]
   /** Fase elegida desde un acceso rápido; Recursos, Videos, Galería y Bitácora la usarán como filtro. */
   phaseFilter: number | null
+  /** Integrante elegido desde su perfil para leer su bitácora. */
+  journalMemberId: string | null
 }
 
-let state: UiState = { mainOpen: true, openMoments: [], openPhases: [], phaseFilter: null }
+let state: UiState = { mainOpen: true, openMoments: [], openPhases: [], phaseFilter: null, journalMemberId: null }
 const listeners = new Set<() => void>()
 
 function set(patch: Partial<UiState>) {
@@ -51,5 +53,11 @@ export const ui = {
     set({ phaseFilter: phaseId })
     scrollToSection(sectionId)
   },
+  /** Abre la Bitácora ya con este integrante elegido. */
+  openJournal(memberId: string) {
+    set({ journalMemberId: memberId })
+    scrollToSection('bitacora')
+  },
+  clearJournalMember: () => set({ journalMemberId: null }),
   setPhaseFilter: (phaseId: number | null) => set({ phaseFilter: phaseId }),
 }

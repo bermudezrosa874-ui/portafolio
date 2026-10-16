@@ -133,12 +133,7 @@ function Form({ cfg }: { cfg: SiteConfig }) {
 
       <Card className="space-y-4">
         <h3 className="font-serif text-2xl font-semibold text-[var(--text)]">Lo que aprendimos y equipo</h3>
-        {text('group_reflection', 'Reflexión grupal', { area: true })}
-        <div className="grid gap-4 md:grid-cols-3">
-          {text('reflection_knowledge', 'Conocimiento', { area: true, rows: 5 })}
-          {text('reflection_skills', 'Habilidades', { area: true, rows: 5 })}
-          {text('reflection_experience', 'Experiencia', { area: true, rows: 5 })}
-        </div>
+        {text('group_reflection', 'Introducción de la reflexión grupal', { area: true, hint: 'Las tres tarjetas (Conocimiento, Habilidades, Experiencia) las escribe cada integrante desde «Mis fases».' })}
         {text('team_text', 'Texto de «Nuestro equipo»', { area: true, rows: 3 })}
       </Card>
 

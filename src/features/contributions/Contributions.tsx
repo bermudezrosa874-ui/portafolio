@@ -11,7 +11,7 @@ import { CATEGORY_LABEL, KIND_LABEL, KindIcon, fmtDate, fmtSize, type Contributi
 
 type Filter = ContributionCategory | 'todos'
 
-/** Aportes del equipo que Rosa ha publicado. Aparecen aquí apenas pasan a «Publicado». */
+/** Aportes del equipo que la administradora ha publicado. Aparecen aquí apenas pasan a «Publicado». */
 export function Contributions() {
   const { data: items = [] } = usePublishedContributions()
   const [filter, setFilter] = useState<Filter>('todos')

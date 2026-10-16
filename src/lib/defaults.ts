@@ -23,9 +23,9 @@ export const DEFAULT_CONFIG: SiteConfig = {
   timeline_learned: 'Muy pronto compartiremos aquí lo que aprendimos con la línea de tiempo.',
   videos_intro: '',
   group_reflection: '',
-  reflection_knowledge: 'Muy pronto compartiremos aquí lo que aprendimos sobre la temática.',
-  reflection_skills: 'Muy pronto compartiremos aquí lo que aprendimos a hacer.',
-  reflection_experience: 'Muy pronto compartiremos aquí lo que nos dejó el proceso.',
+  reflection_knowledge: '',
+  reflection_skills: '',
+  reflection_experience: '',
   team_text: '',
 }
 
@@ -35,6 +35,10 @@ const base = {
   program: 'Licenciatura en Matemáticas',
   photo_path: null,
   user_id: null,
+  color: null,
+  symbol: '',
+  about: '',
+  quote: '',
 }
 
 export const DEFAULT_MEMBERS: Member[] = [

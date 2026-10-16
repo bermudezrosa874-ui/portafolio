@@ -11,6 +11,7 @@ import { SetPasswordForm } from '../admin/LoginForm'
 import { useContributions, useLogLogin } from './api'
 import { ContributionCard } from './ContributionCard'
 import { ContributionForm } from './ContributionForm'
+import { ProfileEditor } from '../team/ProfileEditor'
 import { MyPhases } from './MyPhases'
 import { PhasesBoard } from './PhasesBoard'
 import { ROLE_LABEL, type Contribution } from './model'
@@ -89,7 +90,7 @@ export default function CollaboratorHome() {
             </p>
           </div>
         </header>
-        {!me && <Notice tone="warn">Tu cuenta todavía no está enlazada con una ficha de integrante. Avisa a Rosa para que registre tu correo.</Notice>}
+        {!me && <Notice tone="warn">Tu cuenta todavía no está enlazada con una ficha de integrante. Avisa a la administradora para que registre tu correo.</Notice>}
 
         {editing ? (
           <ContributionForm userId={userId} isAdmin={false} initial={editing} onDone={() => setEditing(null)} onCancel={() => setEditing(null)} />
@@ -146,15 +147,17 @@ export default function CollaboratorHome() {
             <h2 id="mis-aportes" className="font-serif text-3xl font-semibold text-gold">
               Mis aportes
             </h2>
-            <p className="text-sm text-[var(--text-muted)]">Aquí ves y administras únicamente lo que tú subiste. Rosa decide qué se publica en el portafolio.</p>
+            <p className="text-sm text-[var(--text-muted)]">Aquí ves y administras únicamente lo que tú subiste. La administradora decide qué se publica en el portafolio.</p>
             {isLoading ? <p className="text-[var(--text-muted)]">Cargando…</p> : list(mine)}
           </section>
         ) : view === 'subir' ? (
           <ContributionForm userId={userId} isAdmin={false} onDone={() => go('aportes')} />
         ) : (
+          <>
+          <ProfileEditor members={members} userId={userId} isAdmin={false} />
           <Card className="space-y-4">
             <h2 className="flex items-center gap-2 font-serif text-2xl font-semibold text-[var(--text)]">
-              <UserRound size={22} aria-hidden className="text-teal" /> Mi perfil
+              <UserRound size={22} aria-hidden className="text-teal" /> Mi cuenta
             </h2>
             <dl className="grid gap-2 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-6">
               <dt className="text-[var(--text-muted)]">Nombre</dt>
@@ -175,6 +178,7 @@ export default function CollaboratorHome() {
               </Button>
             )}
           </Card>
+          </>
         )}
       </main>
     </div>

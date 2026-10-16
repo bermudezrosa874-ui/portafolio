@@ -68,6 +68,7 @@ export function ReflectionEditor({ member, phase, existing, onDone }: Props) {
       qc.invalidateQueries({ queryKey: ['reflections'] }),
       qc.invalidateQueries({ queryKey: ['admin', 'reflections'] }),
       qc.invalidateQueries({ queryKey: ['phase_counts'] }),
+      qc.invalidateQueries({ queryKey: ['participation'] }),
     ])
     onDone()
   }

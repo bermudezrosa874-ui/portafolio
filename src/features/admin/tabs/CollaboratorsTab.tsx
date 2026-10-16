@@ -18,7 +18,7 @@ const randomPassword = () => {
   return Array.from(bytes, (n) => chars[n % chars.length]).join('')
 }
 
-/** Roles del equipo. Rosa (admin) no se puede degradar desde aquí ni desde la API: la base lo impide. */
+/** Roles del equipo. La administradora (admin) no se puede degradar desde aquí ni desde la API: la base lo impide. */
 export default function CollaboratorsTab() {
   const toast = useToast()
   const confirm = useConfirm()
@@ -115,7 +115,7 @@ export default function CollaboratorsTab() {
   return (
     <div className="space-y-6">
       <TabIntro title="Colaboradores y roles">
-        Rosa es la administradora. Los demás integrantes son colaboradores: suben sus aportes y solo pueden gestionar los suyos. Cuando una persona cree su cuenta con el correo que registraste en «Equipo», se vuelve colaboradora automáticamente.
+        Hay una sola administradora; los demás integrantes son colaboradores: suben sus aportes y solo pueden gestionar los suyos. Cuando una persona cree su cuenta con el correo que registraste en «Equipo», se vuelve colaboradora automáticamente.
       </TabIntro>
       {created && (
         <Card className="space-y-2 border-teal/40">
@@ -150,7 +150,7 @@ export default function CollaboratorsTab() {
                 </div>
                 {role === 'admin' ? (
                   <span className="inline-flex items-center gap-2 rounded-full bg-violet-400/25 px-4 py-1.5 text-sm font-semibold text-[var(--text)]">
-                    <ShieldCheck size={16} aria-hidden /> {ROLE_LABEL.admin} (Rosa)
+                    <ShieldCheck size={16} aria-hidden /> {ROLE_LABEL.admin}
                   </span>
                 ) : m.user_id ? (
                   <label className="flex items-center gap-2 text-sm text-[var(--text)]">

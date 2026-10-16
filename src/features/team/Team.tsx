@@ -1,19 +1,73 @@
 import { useState } from 'react'
 import { SoonText } from '../../components/SoonText'
-import { Avatar } from '../../components/Avatar'
-import { FlipCard } from '../../components/FlipCard'
 import { Reveal } from '../../components/Reveal'
 import { SectionHeading } from '../../components/SectionHeading'
-import { useMembers, useSiteConfig } from '../../lib/queries'
+import { inkOf, memberColor, plainName, tintOf } from '../../lib/members'
+import { useSiteConfig } from '../../lib/queries'
+import { MemberAvatar, SymbolBadge } from './MemberBits'
+import { ParticipationBlock } from './ParticipationBlock'
+import { ProfileModal } from './ProfileModal'
+import { useParticipation, type MemberStats } from './participation'
 
 const TEXT_FALLBACK =
   'Este proyecto fue desarrollado mediante el trabajo colaborativo de los integrantes del grupo, quienes participaron en las diferentes etapas de investigación, diseño, producción y construcción de los recursos académicos.'
-const COLORS = ['#F5B942', '#06B6D4', '#7C3AED', '#2563EB', '#F5B942']
+
+function MemberCard({ s, onOpen }: { s: MemberStats; onOpen: () => void }) {
+  const m = s.member
+  const color = memberColor(m)
+  return (
+    <article
+      className="relative flex h-full flex-col gap-3 rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-6 text-center transition-transform hover:-translate-y-1 hover:shadow-xl"
+      style={{ borderTop: `4px solid ${color}`, backgroundImage: `linear-gradient(180deg, ${tintOf(color, 12)}, transparent 55%)` }}
+    >
+      {m.symbol && <SymbolBadge symbol={m.symbol} color={color} size={40} className="absolute right-4 top-4" />}
+      <div className="mx-auto">
+        <MemberAvatar member={m} size={96} />
+      </div>
+      <div>
+        <h3 className="font-serif text-2xl font-semibold leading-tight text-[var(--text)]">{plainName(m.name)}</h3>
+        <p className="text-sm text-[var(--text-muted)]">{m.topic}</p>
+        <span className="mt-2 inline-flex rounded-full px-3 py-0.5 text-xs font-semibold" style={{ background: tintOf(color, 22), color: inkOf(color) }}>
+          <SoonText value={m.role} />
+        </span>
+      </div>
+
+      {m.about && <p className="line-clamp-3 text-sm leading-relaxed text-[var(--text)]">{m.about}</p>}
+      {m.quote && (
+        <p className="line-clamp-2 font-serif text-base italic leading-snug" style={{ color: inkOf(color) }}>
+          «{m.quote}»
+        </p>
+      )}
+
+      <div className="rounded-xl p-3 text-left" style={{ background: tintOf(color, 9) }}>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-muted)]">Aporte principal al proyecto</p>
+        <p className="mt-1 line-clamp-4 text-sm leading-relaxed text-[var(--text)]">
+          <SoonText value={m.contribution} />
+        </p>
+      </div>
+
+      <p className="text-xs tabular-nums text-[var(--text-muted)]">
+        Bitácora {s.bitacoraDone}/{s.bitacoraTotal} · Reflexión grupal {s.groupDone}/{s.groupTotal}
+      </p>
+
+      <button
+        type="button"
+        onClick={onOpen}
+        className="mt-auto inline-flex min-h-10 items-center justify-center rounded-full border px-5 py-2 text-sm font-semibold transition-colors after:absolute after:inset-0 after:rounded-3xl hover:bg-[var(--hover)]"
+        style={{ borderColor: color, color: inkOf(color) }}
+        aria-label={`Ver el perfil completo de ${plainName(m.name)}`}
+      >
+        Ver perfil completo
+      </button>
+    </article>
+  )
+}
 
 export function Team() {
-  const { data: members = [] } = useMembers()
   const { data: cfg } = useSiteConfig()
-  const [flipped, setFlipped] = useState<Record<string, boolean>>({})
+  const { list, summary, isLoading, phases } = useParticipation()
+  const [openId, setOpenId] = useState<string | null>(null)
+  const opened = list.find((s) => s.member.id === openId) ?? null
 
   return (
     <section
@@ -52,42 +106,19 @@ export function Team() {
         )}
 
         <ul className="flex flex-wrap justify-center gap-5">
-          {members.map((m, i) => {
-            const color = COLORS[i % COLORS.length]
-            return (
-              <li key={m.id} className="w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.84rem)]">
-                <Reveal delay={(i % 3) * 0.08}>
-                  <FlipCard
-                    accent={color}
-                    className="h-[22rem]"
-                    flipped={!!flipped[m.id]}
-                    onToggle={() => setFlipped((f) => ({ ...f, [m.id]: !f[m.id] }))}
-                    front={
-                      <span className="flex h-full flex-col items-center gap-2 p-6 text-center">
-                        <Avatar name={m.name} photoPath={m.photo_path} size={96} className="ring-4 ring-[var(--border)]" />
-                        <span className="mt-2 font-serif text-2xl font-semibold leading-tight text-[var(--text)]">{m.name}</span>
-                        <span className="text-sm text-[var(--text-muted)]">{m.program}</span>
-                        <span className="mt-1 text-sm leading-snug text-[var(--text-muted)]">
-                          <span className="block text-[11px] uppercase tracking-widest">Rol en el proyecto</span>
-                          <SoonText value={m.role} />
-                        </span>
-                        <span className="mt-auto text-xs text-[var(--text-muted)]">Toca para ver su aporte</span>
-                      </span>
-                    }
-                    back={
-                      <span className="flex h-full flex-col p-6">
-                        <span className="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">Aporte principal al proyecto</span>
-                        <span className="mt-1 font-serif text-xl font-semibold text-[var(--text)]">{m.name}</span>
-                        <span className="mt-3 block whitespace-pre-line leading-relaxed text-[var(--text)]"><SoonText value={m.contribution} /></span>
-                      </span>
-                    }
-                  />
-                </Reveal>
-              </li>
-            )
-          })}
+          {list.map((s, i) => (
+            <li key={s.member.id} className="w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc(33.333%-0.84rem)]">
+              <Reveal delay={(i % 3) * 0.08} className="h-full">
+                <MemberCard s={s} onOpen={() => setOpenId(s.member.id)} />
+              </Reveal>
+            </li>
+          ))}
         </ul>
+
+        <ParticipationBlock stats={list} summary={summary} loading={isLoading} onOpen={setOpenId} />
       </div>
+
+      <ProfileModal stats={opened} phases={phases} onClose={() => setOpenId(null)} />
     </section>
   )
 }

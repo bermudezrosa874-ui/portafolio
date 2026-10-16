@@ -94,7 +94,7 @@ export async function reviewContribution(id: string): Promise<ReviewResult> {
     if (error || !data || typeof data.status !== 'string') throw error ?? new Error('sin respuesta')
     return { status: data.status as ContributionStatus, note: (data.note as string | null) ?? null }
   } catch {
-    return { status: 'pending_review', note: 'No se pudo revisar automáticamente; Rosa lo revisará.' }
+    return { status: 'pending_review', note: 'No se pudo revisar automáticamente; la administradora lo revisará.' }
   }
 }
 
@@ -111,7 +111,7 @@ export async function replaceContributionFile(
   check: Ok,
   onProgress: (f: number) => void = () => undefined,
 ): Promise<void> {
-  // El archivo vive siempre en la carpeta de quien lo subió (también si Rosa lo reemplaza).
+  // El archivo vive siempre en la carpeta de quien lo subió (también si la administradora lo reemplaza).
   const path = await upload(c.uploaded_by, file, check, onProgress)
   const { data, error } = await supabase
     .from('contributions')
@@ -204,7 +204,7 @@ export function useAccounts() {
   })
 }
 
-/** Rosa crea la cuenta de un compañero: correo cualquiera y contraseña a su elección (queda confirmada y como colaborador). */
+/** la administradora crea la cuenta de un compañero: correo cualquiera y contraseña a su elección (queda confirmada y como colaborador). */
 export async function createAccount(memberId: string, email: string, password: string): Promise<void> {
   const { error } = await supabase.rpc('admin_create_account', { p_member_id: memberId, p_email: email, p_password: password })
   if (error) throw error

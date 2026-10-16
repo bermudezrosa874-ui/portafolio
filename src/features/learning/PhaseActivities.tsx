@@ -20,7 +20,7 @@ interface Activity {
 
 const getSupabase = async () => (await import('../../lib/supabase')).supabase
 
-/** Actividades de una fase con su fecha. Las ve todo el mundo; Rosa y los colaboradores las agregan. */
+/** Actividades de una fase con su fecha. Las ve todo el mundo; la administradora y los colaboradores las agregan. */
 export function PhaseActivities({ phaseId, color }: { phaseId: number; color: string }) {
   const { session, isAdmin, isCollaborator } = useRole()
   const userId = session?.user.id

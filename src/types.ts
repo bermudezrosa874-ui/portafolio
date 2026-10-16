@@ -45,7 +45,7 @@ export interface Phase {
   status: PhaseStatus
   que_aprendimos: string
   position: number
-  /** La fase se dio por completa: ya no acepta subidas nuevas (Rosa puede reabrirla). */
+  /** La fase se dio por completa: ya no acepta subidas nuevas (la administradora puede reabrirla). */
   uploads_closed?: boolean
 }
 
@@ -175,4 +175,21 @@ export interface Member {
   photo_path: string | null
   position: number
   user_id: string | null
+  /** Color propio de la persona (paleta del portafolio); se usa igual en Equipo, Bitácora y Reflexión grupal. */
+  color: string | null
+  /** Símbolo matemático favorito (máx. 3 caracteres). Vacío = sin insignia. */
+  symbol: string
+  about: string
+  quote: string
+}
+
+export type GroupCard = 'conocimiento' | 'habilidades' | 'experiencia'
+
+export interface GroupEntry {
+  id: string
+  card: GroupCard
+  member_id: string
+  content: string
+  created_at: string
+  updated_at: string
 }

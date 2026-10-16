@@ -7,12 +7,14 @@ import {
   FileText,
   FolderHeart,
   Image,
+  Clock,
   KeyRound,
   LayoutDashboard,
   LogOut,
   Puzzle,
   Settings,
   ShieldAlert,
+  UserRound,
   Users,
   Video,
   type LucideIcon,
@@ -31,6 +33,7 @@ const CollaboratorHome = lazy(() => import('../contributions/CollaboratorHome'))
 const TABS = [
   { id: 'resumen', label: 'Resumen', Panel: lazy(() => import('./tabs/DashboardTab')) },
   { id: 'mios', label: 'Mis fases y aportes', Panel: lazy(() => import('./tabs/MyContributionsTab')) },
+  { id: 'perfil', label: 'Mi perfil', Panel: lazy(() => import('./tabs/MyProfileTab')) },
   { id: 'aportes', label: 'Archivos del equipo', Panel: lazy(() => import('./tabs/TeamFilesTab')) },
   { id: 'colaboradores', label: 'Colaboradores', Panel: lazy(() => import('./tabs/CollaboratorsTab')) },
   { id: 'general', label: 'Datos generales', Panel: lazy(() => import('./tabs/GeneralTab')) },
@@ -41,6 +44,7 @@ const TABS = [
   { id: 'bitacora', label: 'Bitácora', Panel: lazy(() => import('./tabs/JournalTab')) },
   { id: 'equipo', label: 'Equipo', Panel: lazy(() => import('./tabs/TeamTab')) },
   { id: 'referencias', label: 'Referencias', Panel: lazy(() => import('./tabs/ReferencesTab')) },
+  { id: 'conexiones', label: 'Conexiones', Panel: lazy(() => import('./tabs/LoginsTab')) },
   { id: 'cuenta', label: 'Mi cuenta', Panel: lazy(() => import('./tabs/AccountTab')) },
 ] as const
 
@@ -49,6 +53,7 @@ type TabId = (typeof TABS)[number]['id']
 const TAB_ICONS: Record<TabId, LucideIcon> = {
   resumen: LayoutDashboard,
   mios: FolderHeart,
+  perfil: UserRound,
   aportes: FolderHeart,
   colaboradores: Users,
   general: Settings,
@@ -59,6 +64,7 @@ const TAB_ICONS: Record<TabId, LucideIcon> = {
   bitacora: BookOpen,
   equipo: Users,
   referencias: FileText,
+  conexiones: Clock,
   cuenta: KeyRound,
 }
 

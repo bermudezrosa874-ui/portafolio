@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Compass, Lightbulb, Mountain, Pencil, Sparkles, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Avatar } from '../../components/Avatar'
 import { FlipCard } from '../../components/FlipCard'
 import { Reveal } from '../../components/Reveal'
 import { SectionHeading } from '../../components/SectionHeading'
+import { MemberMini } from '../team/MemberBits'
 import { useRole } from '../../hooks/useAuth'
 import { useLearningData, useMembers, useReflections } from '../../lib/queries'
-import { useUi } from '../../lib/uiStore'
+import { plainName } from '../../lib/members'
+import { ui, useUi } from '../../lib/uiStore'
 import type { Reflection } from '../../types'
 import { REFLECTION_FIELDS, ReflectionEditor } from './ReflectionEditor'
 
@@ -21,13 +22,11 @@ export const META: Record<(typeof REFLECTION_FIELDS)[number]['key'], { icon: Luc
 export const isComplete = (r: Reflection | undefined) =>
   !!r && [r.aprendi, r.dificulto, r.sorprendio, r.quisiera_aprender].every((t) => t.trim().length > 0)
 
-const firstName = (name: string) => name.replace(/\[[^\]]*\]/g, '').trim().split(/\s+/)[0] || 'Integrante'
-
 export function Journal() {
   const { data: members = [] } = useMembers()
   const { data: reflections = [] } = useReflections()
   const { data: learning } = useLearningData()
-  const { phaseFilter } = useUi()
+  const { phaseFilter, journalMemberId } = useUi()
   const { session, isAdmin } = useRole()
 
   const phases = learning?.phases ?? []
@@ -38,8 +37,24 @@ export function Journal() {
   const [flips, setFlips] = useState([false, false, false, false])
   const [editing, setEditing] = useState(false)
 
-  const member = members.find((m) => m.id === memberId) ?? members[0]
+  // Nadie queda elegido por defecto: el visitante escoge. Con sesión iniciada se preselecciona a quien entró.
+  const member = members.find((m) => m.id === memberId)
   const phase = phases.find((p) => p.id === phaseId)
+
+  const myMember = session ? members.find((m) => m.user_id === session.user.id) : undefined
+  const preselected = useRef(false)
+  useEffect(() => {
+    if (preselected.current || !myMember) return
+    preselected.current = true
+    setMemberId((current) => current ?? myMember.id)
+  }, [myMember])
+
+  // Llegar desde el perfil de alguien (Equipo → «Leer su bitácora») deja a esa persona elegida.
+  useEffect(() => {
+    if (!journalMemberId) return
+    setMemberId(journalMemberId)
+    ui.clearJournalMember()
+  }, [journalMemberId])
 
   // Un acceso rápido desde una fase fija la fase de la bitácora.
   useEffect(() => {
@@ -61,11 +76,10 @@ export function Journal() {
   const completedFor = (mId: string) => phaseIds.filter((p) => isComplete(byKey.get(`${mId}:${p}`))).length
 
   const current = member ? byKey.get(`${member.id}:${phaseId}`) : undefined
-  const myMember = session ? members.find((m) => m.user_id === session.user.id) : undefined
   const canEdit = !!member && !!session && (isAdmin || myMember?.id === member.id)
   const allFlipped = flips.every(Boolean)
 
-  const memberName = member ? member.name.replace(/\[[^\]]*\]/g, '').trim() || 'Integrante' : ''
+  const memberName = member ? plainName(member.name) : ''
 
   return (
     <section
@@ -87,56 +101,51 @@ export function Journal() {
             aria-label="Elegir integrante"
             className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5"
           >
-            {members.map((m) => {
-              const on = m.id === member?.id
-              const done = completedFor(m.id)
+            {members.map((m) => (
+              <MemberMini
+                key={m.id}
+                member={m}
+                done={completedFor(m.id)}
+                total={phaseIds.length}
+                active={m.id === member?.id}
+                onClick={() => setMemberId(m.id)}
+              />
+            ))}
+          </div>
+        </Reveal>
+
+        {!member && (
+          <p role="status" className="mt-8 text-center font-serif text-xl text-[var(--text-muted)]">
+            Elige a un integrante para leer su bitácora
+          </p>
+        )}
+
+        {member && (
+          <div role="group" aria-label="Elegir fase" className="mt-6 flex flex-wrap justify-center gap-2">
+            {phaseIds.map((id) => {
+              const on = id === phaseId
+              const done = member ? isComplete(byKey.get(`${member.id}:${id}`)) : false
               return (
                 <button
-                  key={m.id}
+                  key={id}
                   type="button"
                   aria-pressed={on}
-                  onClick={() => setMemberId(m.id)}
-                  className={`flex w-40 shrink-0 snap-start flex-col items-center gap-2 rounded-2xl border p-4 text-center transition-all sm:w-auto sm:shrink ${
+                  title={phases.find((p) => p.id === id)?.title}
+                  onClick={() => setPhaseId(id)}
+                  className={`min-h-10 rounded-full border px-4 py-2 text-sm transition-colors ${
                     on
-                      ? 'border-gold bg-gold/10 shadow-[0_0_0_1px_var(--c-gold)]'
-                      : 'border-[var(--border)] bg-[var(--surface)] hover:-translate-y-0.5'
+                      ? 'border-[#f5b942] bg-[#f5b942] font-semibold text-[#071426]'
+                      : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-gold'
                   }`}
                 >
-                  <Avatar name={m.name} photoPath={m.photo_path} size={56} />
-                  <span className="font-serif text-lg font-semibold leading-tight text-[var(--text)]">{firstName(m.name)}</span>
-                  <span className="rounded-full bg-[var(--border)] px-2.5 py-0.5 text-xs tabular-nums text-[var(--text)]">
-                    {firstName(m.name)}: {done}/{phaseIds.length} fases completadas
-                  </span>
+                  Fase {id}
+                  {done && <span className="sr-only"> (completa)</span>}
+                  {done && <span aria-hidden> ✓</span>}
                 </button>
               )
             })}
           </div>
-        </Reveal>
-
-        <div role="group" aria-label="Elegir fase" className="mt-6 flex flex-wrap justify-center gap-2">
-          {phaseIds.map((id) => {
-            const on = id === phaseId
-            const done = member ? isComplete(byKey.get(`${member.id}:${id}`)) : false
-            return (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={on}
-                title={phases.find((p) => p.id === id)?.title}
-                onClick={() => setPhaseId(id)}
-                className={`min-h-10 rounded-full border px-4 py-2 text-sm transition-colors ${
-                  on
-                    ? 'border-[#f5b942] bg-[#f5b942] font-semibold text-[#071426]'
-                    : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-gold'
-                }`}
-              >
-                Fase {id}
-                {done && <span className="sr-only"> (completa)</span>}
-                {done && <span aria-hidden> ✓</span>}
-              </button>
-            )
-          })}
-        </div>
+        )}
 
         {member && (
           <div className="mt-8">

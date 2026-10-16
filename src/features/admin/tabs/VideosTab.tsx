@@ -135,7 +135,7 @@ function VideoForm({ initial, nextPosition, phases, onClose, defaultPublished, t
   )
 }
 
-/** ownerId: modo colaborador (solo ve y maneja lo que subió él). Sin ownerId: Rosa, que maneja todo. */
+/** ownerId: modo colaborador (solo ve y maneja lo que subió él). Sin ownerId: la administradora, que maneja todo. */
 export default function VideosTab({ ownerId }: { ownerId?: string }) {
   const { data: all = [], isLoading } = useAdminRows<Row>('videos', [['position', true], ['created_at', true]])
   const rows = ownerId ? all.filter((r) => r.uploaded_by === ownerId) : all

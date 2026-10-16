@@ -15,7 +15,7 @@ interface Props {
 
 const cleanName = (name: string) => name.replace(/[\\/]/g, '_').slice(0, 120)
 
-/** Se muestra a Rosa y a los colaboradores (con las reglas de la base). Valida el tipo real, renombra con UUID y muestra progreso. */
+/** Se muestra a la administradora y a los colaboradores (con las reglas de la base). Valida el tipo real, renombra con UUID y muestra progreso. */
 export function PhaseUploader({ phaseId, existing, userId, userName }: Props) {
   const qc = useQueryClient()
   const inputRef = useRef<HTMLInputElement>(null)

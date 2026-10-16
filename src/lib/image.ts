@@ -60,3 +60,34 @@ export async function processSingle(file: File, maxSide = 1280): Promise<Process
     bitmap.close()
   }
 }
+
+/** Foto de perfil: recorte cuadrado centrado (se muestra en círculo) comprimido a ≤ 300 KB. */
+export const AVATAR_MAX_BYTES = 300 * 1024
+
+export async function processAvatar(file: File): Promise<ProcessedImage> {
+  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+  try {
+    const crop = Math.min(bitmap.width, bitmap.height)
+    const sx = Math.floor((bitmap.width - crop) / 2)
+    const sy = Math.floor((bitmap.height - crop) / 2)
+    let last: Blob | null = null
+    for (const side of [512, 384, 256, 192]) {
+      const canvas = document.createElement('canvas')
+      canvas.width = canvas.height = Math.min(side, crop)
+      const ctx = canvas.getContext('2d')
+      if (!ctx) throw new Error('Tu navegador no permite procesar imágenes.')
+      ctx.imageSmoothingQuality = 'high'
+      ctx.drawImage(bitmap, sx, sy, crop, crop, 0, 0, canvas.width, canvas.height)
+      for (const q of [0.85, 0.7, 0.55, 0.4]) {
+        last = await encode(canvas, q)
+        if (last.size <= AVATAR_MAX_BYTES) {
+          const webp = last.type === 'image/webp'
+          return { blob: last, width: canvas.width, height: canvas.height, mime: webp ? 'image/webp' : 'image/jpeg', ext: webp ? 'webp' : 'jpg' }
+        }
+      }
+    }
+    throw new Error('No se pudo reducir la foto a 300 KB. Prueba con otra imagen.')
+  } finally {
+    bitmap.close()
+  }
+}

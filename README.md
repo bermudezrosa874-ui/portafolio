@@ -1,7 +1,7 @@
 # Ábaco del Tiempo
 
 Portafolio digital académico de **Historia de las Matemáticas** (Licenciatura en Matemáticas, UNAD), elaborado por
-Rosalinda Bermudez Urbay como trabajo colaborativo. Tiene una carta de apertura animada, entregas por fases con visor de PDF y
+el equipo como trabajo colaborativo. Tiene una carta de apertura animada, entregas por fases con visor de PDF y
 Word, línea de tiempo, entrevistas (videos), recursos interactivos, aportes del equipo, galería, bitácora, equipo y referencias en
 APA 7. Se edita desde un panel (`/admin`).
 
@@ -57,12 +57,12 @@ el cierre de fases.
 4. Pulsa **Deploy**. Cuando termine, Vercel te da una dirección (`https://algo.vercel.app`).
    Ve a *Settings → Environment Variables*, corrige `VITE_SITE_URL` con esa dirección y haz **Redeploy**.
 
-En Supabase → **Authentication → Sign In / Providers**, deja **desactivado** «Allow new users to sign up»: las cuentas las crea Rosa
+En Supabase → **Authentication → Sign In / Providers**, deja **desactivado** «Allow new users to sign up»: las cuentas las crea la administradora
 desde el panel. (Además, la base rechaza cualquier registro con un correo no autorizado o cuando ya hay 6 cuentas.)
 
 ## 4. Cuentas y roles
 
-| | Docente (sin cuenta) | Colaborador | Administradora (Rosa) |
+| | Docente (sin cuenta) | Colaborador | Administradora (la administradora) |
 |---|---|---|---|
 | Ver lo publicado del portafolio | ✅ solo lectura | ✅ | ✅ |
 | Subir aportes, documentos, recursos, videos y línea de tiempo | ❌ | ✅ (cada espacio, una sola vez) | ✅ |
@@ -73,16 +73,16 @@ desde el panel. (Además, la base rechaza cualquier registro con un correo no au
 - El **docente** no necesita cuenta: entra al portafolio y lo ve en modo lectura. La base de datos impide que un visitante escriba.
 - Hay **máximo 6 cuentas**.
 - **Crear la cuenta de un compañero:** panel → **Colaboradores** → botón **Crear cuenta** en su fila. Se escribe un correo (puede
-  ser cualquiera) y una contraseña; la cuenta queda lista, sin confirmar nada. Rosa entrega esos datos.
+  ser cualquiera) y una contraseña; la cuenta queda lista, sin confirmar nada. la administradora entrega esos datos.
 - **No hay «Olvidé mi contraseña».** Cada persona puede cambiarla desde su perfil (pide la actual y la nueva). Si alguien la
-  olvida, Rosa elimina su cuenta (sección «Cuentas») y la crea de nuevo.
+  olvida, la administradora elimina su cuenta (sección «Cuentas») y la crea de nuevo.
 - La sesión se cierra sola tras **1 hora** sin actividad.
 
 ## 5. Usar el panel (`/admin`)
 
 Se entra con **Iniciar sesión** (al final del menú lateral del portafolio). El menú lateral cambia según el rol.
 
-**Rosa:** Resumen (cifras, avisos de nuevos aportes y actividad) · Mis fases y aportes · Archivos del equipo (filtros por integrante,
+**la administradora:** Resumen (cifras, avisos de nuevos aportes y actividad) · Mis fases y aportes · Archivos del equipo (filtros por integrante,
 estado y fase; botón **Publicar**) · Colaboradores (roles, crear y eliminar cuentas) · Datos generales · Fases y entregas ·
 Línea de tiempo y recursos · Videos · Galería · Bitácora · Equipo · Referencias · Mi cuenta.
 
@@ -92,17 +92,17 @@ Mi perfil.
 ## 6. Reglas del contenido por fase
 
 - Cada fase tiene **un solo** documento de entrega, **un solo** recurso digital y **un solo** video o entrevista; la línea de tiempo
-  es **una sola** para todo el portafolio. Cuando alguien ocupa un espacio, nadie más puede subir otro igual (quien lo subió o Rosa
+  es **una sola** para todo el portafolio. Cuando alguien ocupa un espacio, nadie más puede subir otro igual (quien lo subió o la administradora
   pueden cambiarlo).
 - Dentro de cada fase, quien sube ve **«¿Qué hiciste en esta fase?»** con lo que falta. Si ya hay algo subido pregunta **«¿Hiciste
-  algo más?»**; con **«No, la fase está completa»** la fase se cierra y deja de aceptar subidas (solo Rosa puede reabrirla).
+  algo más?»**; con **«No, la fase está completa»** la fase se cierra y deja de aceptar subidas (solo la administradora puede reabrirla).
 - Cualquier integrante puede agregar **actividades con fecha** a una fase.
 - Quien visita solo ve lo que existe: los bloques vacíos no aparecen.
 
 ## 7. Revisión automática con IA (opcional)
 
 Cuando un colaborador sube un **aporte**, una función del servidor (`supabase/functions/review-contribution`) lo analiza con
-DeepSeek: si está bien lo publica solo; si no, queda pendiente con el motivo para que Rosa decida. Está pensada para gastar muy
+DeepSeek: si está bien lo publica solo; si no, queda pendiente con el motivo para que la administradora decida. Está pensada para gastar muy
 poco (modelo barato, solo un extracto del texto, una revisión por contenido).
 
 Para activarla en un proyecto nuevo:
@@ -113,7 +113,7 @@ npx supabase functions deploy review-contribution --use-api
 ```
 
 Límites: lee el texto de PDF, Word y PowerPoint; las imágenes, los videos y los enlaces se juzgan solo por su título y descripción.
-Si la IA falla o se acaba el saldo, nada se publica solo: queda pendiente para Rosa.
+Si la IA falla o se acaba el saldo, nada se publica solo: queda pendiente para la administradora.
 
 ## 8. Seguridad en una frase
 
@@ -128,8 +128,8 @@ Los archivos se validan por su contenido real (no por la extensión) y los bucke
 | La pantalla sale en blanco con «Faltan VITE_SUPABASE_URL…» | Falta el `.env` (local) o las variables en Vercel |
 | Al subir un archivo dice «Debes iniciar sesión» | La sesión caducó: vuelve a entrar |
 | «No tienes permiso» al guardar | La cuenta no tiene ese rol o el espacio ya está ocupado |
-| «Esta fase está completa» | Rosa puede reabrirla desde la propia fase en Aprendizajes |
-| Un aporte queda «Pendiente» con un motivo | La revisión automática no lo aprobó: corrígelo o pídele a Rosa que lo publique |
+| «Esta fase está completa» | la administradora puede reabrirla desde la propia fase en Aprendizajes |
+| Un aporte queda «Pendiente» con un motivo | La revisión automática no lo aprobó: corrígelo o pídele a la administradora que lo publique |
 | Un recurso no se ve incrustado | Algunos sitios lo prohíben; usa «Abrir en pestaña nueva» |
 
 ## 10. Estructura

@@ -6,7 +6,7 @@
 //   · solo se envía un extracto de unos 5000 caracteres (no el documento completo);
 //   · mismo texto de instrucciones siempre (el proveedor lo cobra más barato al repetirse);
 //   · una revisión por contenido: si no cambia nada, no se vuelve a pagar;
-//   · los aportes de Rosa (administradora) no se revisan.
+//   · los aportes de la administradora (administradora) no se revisan.
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { unzipSync, strFromU8 } from 'npm:fflate@0.8.2'
 import { getDocumentProxy } from 'npm:unpdf@0.12.1'
@@ -107,7 +107,7 @@ Deno.serve(async (req) => {
       await admin.from('contributions').update({ review_note: note, review_sig: keepSig ? sig : null }).eq('id', id)
       return json({ status: 'pending_review', note })
     }
-    if (!apiKey) return hold('La revisión automática no está activa; Rosa lo revisará.', false)
+    if (!apiKey) return hold('La revisión automática no está activa; la administradora lo revisará.', false)
 
     // 4. Extracto del documento (solo texto; imágenes y videos se juzgan por su título y descripción)
     let excerpt = ''
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
         /* si no se puede leer, se decide con lo que haya */
       }
       excerpt = excerpt.replace(/\s+/g, ' ').trim().slice(0, MAX_TEXT)
-      if (!excerpt) return hold('No se pudo leer texto del documento (¿es una imagen escaneada?). Rosa lo revisará.', true)
+      if (!excerpt) return hold('No se pudo leer texto del documento (¿es una imagen escaneada?). la administradora lo revisará.', true)
     }
 
     // 5. Una sola pregunta corta al modelo
@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
       const data = await res.json()
       verdict = JSON.parse(data.choices?.[0]?.message?.content ?? '')
     } catch {
-      return hold('No se pudo revisar automáticamente; Rosa lo revisará.', false)
+      return hold('No se pudo revisar automáticamente; la administradora lo revisará.', false)
     }
 
     // 6. Decisión: solo se publica si el modelo lo aprueba de forma explícita

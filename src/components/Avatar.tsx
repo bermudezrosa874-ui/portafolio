@@ -1,24 +1,17 @@
+import { initialsOf as initials, readableOn } from '../lib/members'
 import { publicUrl } from '../lib/upload'
-
-/** Iniciales sin marcadores entre corchetes. */
-function initials(name: string): string {
-  const words = name
-    .replace(/\[[^\]]*\]/g, '')
-    .split(/\s+/)
-    .filter(Boolean)
-  if (words.length === 0) return '?'
-  return (words[0][0] + (words[1]?.[0] ?? '')).toUpperCase()
-}
 
 interface Props {
   name: string
   photoPath: string | null
   size?: number
   className?: string
+  /** Color de la persona: sin foto, el avatar son sus iniciales sobre este color. */
+  color?: string
 }
 
 /** Foto del integrante o, si no hay, una imagen por defecto con sus iniciales. */
-export function Avatar({ name, photoPath, size = 64, className = '' }: Props) {
+export function Avatar({ name, photoPath, size = 64, className = '', color }: Props) {
   const shape = `shrink-0 rounded-full object-cover ${className}`
   if (photoPath) {
     return (
@@ -32,6 +25,23 @@ export function Avatar({ name, photoPath, size = 64, className = '' }: Props) {
         className={shape}
         style={{ width: size, height: size }}
       />
+    )
+  }
+  if (color) {
+    return (
+      <svg
+        role="img"
+        aria-label={`Avatar de ${name.replace(/\[[^\]]*\]/g, '').trim() || 'integrante'}`}
+        viewBox="0 0 64 64"
+        width={size}
+        height={size}
+        className={shape}
+      >
+        <circle cx="32" cy="32" r="32" fill={color} />
+        <text x="32" y="40" textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="24" fontWeight="700" fill={readableOn(color)}>
+          {initials(name)}
+        </text>
+      </svg>
     )
   }
   return (

@@ -12,7 +12,7 @@ const firstName = (full: string) => full.split(' ')[0] || full
 
 const TONES = ['from-sky-400/25 to-violet-400/20', 'from-pink-400/25 to-violet-400/20', 'from-emerald-400/25 to-sky-400/20', 'from-violet-400/25 to-pink-400/20']
 
-/** Resumen de Rosa: cifras del equipo, avisos de nuevos aportes y actividad reciente. */
+/** Resumen de la administradora: cifras del equipo, avisos de nuevos aportes y actividad reciente. */
 export default function DashboardTab({ go }: { go?: TabGo }) {
   const toast = useToast()
   const qc = useQueryClient()

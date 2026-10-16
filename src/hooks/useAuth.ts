@@ -30,7 +30,7 @@ export function useSession() {
   return { session, ready }
 }
 
-/** Rol del usuario con sesión: 'admin' (Rosa), 'collaborator', 'user' o null (visitante). La RLS es la defensa real. */
+/** Rol del usuario con sesión: 'admin' (la administradora), 'collaborator', 'user' o null (visitante). La RLS es la defensa real. */
 export function useRole() {
   const { session, ready } = useSession()
   const userId = session?.user.id

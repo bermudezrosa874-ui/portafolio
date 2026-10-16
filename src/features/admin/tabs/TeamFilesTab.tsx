@@ -12,7 +12,7 @@ import { FolderHeart } from 'lucide-react'
 
 const shortName = (full: string) => full.replace(/\[[^\]]*\]/g, '').trim().split(' ').slice(0, 2).join(' ')
 
-/** Archivos y aportes de todo el equipo, filtrables por integrante. Rosa los administra todos. */
+/** Archivos y aportes de todo el equipo, filtrables por integrante. la administradora los administra todos. */
 export default function TeamFilesTab() {
   const { session } = useRole()
   const userId = session?.user.id ?? ''

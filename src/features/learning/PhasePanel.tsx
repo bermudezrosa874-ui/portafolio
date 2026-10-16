@@ -26,13 +26,13 @@ export function dateRange(phase: Phase): string {
 
 /**
  * Lo que ve cada quien: quien visita solo ve lo que ya existe (lo demás queda cerrado, sin textos vacíos).
- * Rosa y los colaboradores además ven «¿Qué hiciste en esta fase?» para subir lo que falta.
+ * la administradora y los colaboradores además ven «¿Qué hiciste en esta fase?» para subir lo que falta.
  */
 export function PhasePanel({ phase, moment, deliverable, counts }: Props) {
   const { isAdmin, isCollaborator, session, userName } = useRole()
   const [replacing, setReplacing] = useState(false)
   const isUploader = !!session && (isAdmin || isCollaborator)
-  // Solo quien subió el documento (o Rosa) puede reemplazarlo.
+  // Solo quien subió el documento (o la administradora) puede reemplazarlo.
   const canReplace = !!session && !!deliverable && (isAdmin || deliverable.uploaded_by === session.user.id)
 
   const dates = dateRange(phase)

@@ -27,7 +27,7 @@ const getSupabase = async () => (await import('../../lib/supabase')).supabase
  * «¿Qué hiciste en esta fase?» Solo muestra lo que todavía se puede subir: cada espacio (documento, recurso digital y video)
  * se ocupa una sola vez y, cuando ya está subido, deja de aparecer. Muchas fases solo llevan el documento: por eso, cuando
  * ya hay algo subido, se pregunta «¿Hiciste algo más?» y se puede responder «No, la fase está completa». Una fase completa
- * deja de mostrar este bloque (Rosa puede reabrirla). Solo lo ven Rosa y los colaboradores.
+ * deja de mostrar este bloque (la administradora puede reabrirla). Solo lo ven la administradora y los colaboradores.
  *
  * `go`: si se indica (dentro del panel), los botones cambian de sección del panel; si no, llevan a /admin.
  */
@@ -89,7 +89,7 @@ export function PhaseSlots({ phase, deliverable, go }: { phase: Phase; deliverab
   const action = 'inline-flex min-h-9 items-center justify-center rounded-full border border-[var(--border)] px-4 text-sm font-semibold text-[var(--text)] transition-colors hover:bg-[var(--hover)] disabled:opacity-50'
   const allTaken = phaseSlots.every((s) => s.taken)
 
-  // Fase completa (cerrada a mano o con sus tres espacios llenos): el bloque desaparece. Solo Rosa ve cómo reabrir.
+  // Fase completa (cerrada a mano o con sus tres espacios llenos): el bloque desaparece. Solo la administradora ve cómo reabrir.
   if (phase.uploads_closed || allTaken) {
     if (!isAdmin || !phase.uploads_closed) return null
     return (

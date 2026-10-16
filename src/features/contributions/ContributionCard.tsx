@@ -56,7 +56,7 @@ export function ContributionCard({ c, isAdmin, showUploader, onEdit }: Props) {
       if (!isAdmin) {
         const r = await reviewContribution(c.id)
         await refresh()
-        toast(r.status === 'published' ? 'ok' : 'info', r.status === 'published' ? 'El archivo nuevo ya está publicado.' : `Aún no se publicó: ${r.note ?? 'Rosa lo revisará.'}`)
+        toast(r.status === 'published' ? 'ok' : 'info', r.status === 'published' ? 'El archivo nuevo ya está publicado.' : `Aún no se publicó: ${r.note ?? 'La administradora lo revisará.'}`)
       }
     })
   }

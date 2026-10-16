@@ -6,6 +6,7 @@ import type {
   Reflection,
   Deliverable,
   Evidence,
+  GroupEntry,
   Member,
   Moment,
   Phase,
@@ -104,6 +105,20 @@ export function useReflections() {
         .select('id, member_id, phase_id, aprendi, dificulto, sorprendio, quisiera_aprender')
       if (error) throw error
       return data as Reflection[]
+    },
+  })
+}
+
+export function useGroupEntries() {
+  return useQuery({
+    queryKey: ['group_entries'],
+    queryFn: async (): Promise<GroupEntry[]> => {
+      const { data, error } = await (await getSupabase())
+        .from('group_reflection_entries')
+        .select('id, card, member_id, content, created_at, updated_at')
+        .order('created_at')
+      if (error) throw error
+      return data as GroupEntry[]
     },
   })
 }

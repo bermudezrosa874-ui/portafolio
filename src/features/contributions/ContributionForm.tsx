@@ -34,7 +34,7 @@ interface Props {
 
 const CATEGORIES = (Object.keys(CATEGORY_LABEL) as ContributionCategory[]).map((value) => ({ value, label: CATEGORY_LABEL[value] }))
 
-/** Subir o editar un aporte. Quien sube NO elige «publicado»: eso lo decide Rosa. */
+/** Subir o editar un aporte. Quien sube NO elige «publicado»: eso lo decide la administradora. */
 export function ContributionForm({ userId, isAdmin, initial, defaultPhase, onDone, onCancel }: Props) {
   const toast = useToast()
   const refresh = useRefreshContributions()
@@ -98,7 +98,7 @@ export function ContributionForm({ userId, isAdmin, initial, defaultPhase, onDon
         const r = await reviewContribution(reviewId)
         await refresh()
         if (r.status === 'published') toast('ok', '¡Publicado! Tu aporte ya está en el portafolio.')
-        else toast('info', `Aún no se publicó: ${r.note ?? 'Rosa lo revisará.'}`)
+        else toast('info', `Aún no se publicó: ${r.note ?? 'La administradora lo revisará.'}`)
       } else {
         toast('ok', editing ? 'Cambios guardados.' : nextStatus === 'draft' ? 'Guardado como borrador.' : 'Aporte guardado.')
       }

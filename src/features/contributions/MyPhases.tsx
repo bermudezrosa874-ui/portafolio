@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BookOpen, Compass, FolderHeart, Pencil, PlusCircle, Wrench, type LucideIcon } from 'lucide-react'
+import { FolderHeart, Pencil, PlusCircle } from 'lucide-react'
 import { EmptyState } from '../../components/EmptyState'
 import { FlipCard } from '../../components/FlipCard'
 import { Button, Notice } from '../../components/ui/forms'
-import { useLearningData, useMembers, useReflections, useSiteConfig } from '../../lib/queries'
+import { useLearningData, useMembers, useReflections } from '../../lib/queries'
+import { GroupReflectionEditor } from '../reflection/GroupReflectionEditor'
 import { REFLECTION_FIELDS, ReflectionEditor } from '../journal/ReflectionEditor'
 import { META, isComplete } from '../journal/Journal'
 import { useContributions } from './api'
@@ -15,13 +16,12 @@ type Sel = number | 'todos'
 
 /**
  * Espacio de cada integrante por fase: su bitácora (4 tarjetas), cuántas fases lleva completas y los
- * aportes que subió a cada una. Lo usan tanto los colaboradores como Rosa (que también es integrante).
+ * aportes que subió a cada una. Lo usan tanto los colaboradores como la administradora (que también es integrante).
  */
 export function MyPhases({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
   const { data: members = [] } = useMembers()
   const { data: reflections = [] } = useReflections()
   const { data: learning } = useLearningData()
-  const { data: cfg } = useSiteConfig()
   const { data: mine = [], isLoading } = useContributions({ mine: true, userId })
 
   const me = members.find((m) => m.user_id === userId)
@@ -64,12 +64,6 @@ export function MyPhases({ userId, isAdmin }: { userId: string; isAdmin: boolean
     `min-h-10 rounded-full border px-4 py-2 text-sm transition-colors ${
       on ? 'border-[#f5b942] bg-[#f5b942] font-semibold text-[#071426]' : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-gold'
     }`
-
-  const group: { title: string; hint: string; text: string | undefined; icon: LucideIcon; color: string }[] = [
-    { title: 'Conocimiento', hint: 'Qué aprendimos sobre la temática', text: cfg?.reflection_knowledge, icon: BookOpen, color: '#06B6D4' },
-    { title: 'Habilidades', hint: 'Qué aprendimos a hacer', text: cfg?.reflection_skills, icon: Wrench, color: '#7C3AED' },
-    { title: 'Experiencia', hint: 'Qué nos dejó el proceso', text: cfg?.reflection_experience, icon: Compass, color: '#F5B942' },
-  ]
 
   return (
     <div className="space-y-8">
@@ -188,24 +182,7 @@ export function MyPhases({ userId, isAdmin }: { userId: string; isAdmin: boolean
         )}
       </section>
 
-      <section aria-labelledby="grupal" className="space-y-3">
-        <h3 id="grupal" className="font-serif text-2xl font-semibold text-[var(--text)]">
-          Reflexión grupal · Lo que aprendimos
-        </h3>
-        <p className="text-sm text-[var(--text-muted)]">{isAdmin ? 'Se edita en «Datos generales».' : 'Este texto del grupo lo edita Rosa.'}</p>
-        <div className="grid gap-4 md:grid-cols-3">
-          {group.map(({ title, hint, text, icon: Icon, color }) => (
-            <article key={title} className="soft-shadow rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5" style={{ borderTop: `3px solid ${color}` }}>
-              <span className="grid h-11 w-11 place-items-center rounded-xl" style={{ background: `${color}22`, color }}>
-                <Icon size={22} aria-hidden />
-              </span>
-              <h4 className="mt-3 font-serif text-xl font-semibold text-[var(--text)]">{title}</h4>
-              <p className="text-xs uppercase tracking-widest text-[var(--text-muted)]">{hint}</p>
-              <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">{text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+      <GroupReflectionEditor userId={userId} isAdmin={isAdmin} />
     </div>
   )
 }
