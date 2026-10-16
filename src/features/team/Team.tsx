@@ -26,7 +26,6 @@ function MemberCard({ s, onOpen }: { s: MemberStats; onOpen: () => void }) {
       </div>
       <div>
         <h3 className="font-serif text-2xl font-semibold leading-tight text-[var(--text)]">{plainName(m.name)}</h3>
-        <p className="text-sm text-[var(--text-muted)]">{m.topic}</p>
         <span className="mt-2 inline-flex rounded-full px-3 py-0.5 text-xs font-semibold" style={{ background: tintOf(color, 22), color: inkOf(color) }}>
           <SoonText value={m.role} />
         </span>

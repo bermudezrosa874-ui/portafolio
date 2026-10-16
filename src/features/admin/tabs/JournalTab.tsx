@@ -64,7 +64,6 @@ export default function JournalTab() {
               <tr key={m.id} className="border-t border-[var(--border)]">
                 <th scope="row" className="p-2 text-left font-medium text-[var(--text)]">
                   {plain(m.name)}
-                  <span className="block text-xs font-normal text-[var(--text-muted)]">{m.topic}</span>
                 </th>
                 {phases.map((p) => {
                   const r = find(m.id, p.id)

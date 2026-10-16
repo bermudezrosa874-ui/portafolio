@@ -112,7 +112,6 @@ function Panel({
           <h2 id="perfil-nombre" className="font-serif text-2xl font-semibold leading-tight sm:text-3xl">
             {name}
           </h2>
-          <p className="mt-0.5 text-sm text-[var(--text-muted)]">{m.topic}</p>
           <span className="mt-2 inline-flex rounded-full px-3 py-0.5 text-xs font-semibold" style={{ background: tintOf(color, 22), color: inkOf(color) }}>
             <SoonText value={m.role} />
           </span>

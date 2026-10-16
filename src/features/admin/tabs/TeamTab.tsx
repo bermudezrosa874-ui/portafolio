@@ -156,7 +156,7 @@ function EmailsSection({ members }: { members: Member[] }) {
       <Card className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <TextField label="Correo del integrante" type="email" value={email} onChange={setEmail} error={error} autoComplete="off" />
-          <SelectField label="Ficha del integrante" value={memberId} onChange={setMemberId} options={members.map((m) => ({ value: m.id, label: `${nameOf(m.id)} · ${m.topic}` }))} />
+          <SelectField label="Ficha del integrante" value={memberId} onChange={setMemberId} options={members.map((m) => ({ value: m.id, label: nameOf(m.id) }))} />
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Toggle checked={admin} onChange={setAdmin} labelOn="Será administrador/a" labelOff="Solo integrante" />
@@ -226,7 +226,7 @@ export default function TeamTab() {
             <div className="min-w-0 flex-1">
               <p className="truncate font-medium text-[var(--text)]">{m.name}</p>
               <p className="text-sm text-[var(--text-muted)]">
-                {m.topic} · {m.role}
+                {m.role}
               </p>
             </div>
             <Button variant="secondary" onClick={() => setEditing(m)} aria-label={`Editar ${m.name}`}>

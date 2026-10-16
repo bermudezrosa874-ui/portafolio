@@ -58,9 +58,6 @@ export function ParticipationBlock({
                     <MemberAvatar member={m} size={48} badge />
                     <span className="min-w-0">
                       <span className="block truncate font-serif text-lg font-semibold leading-tight text-[var(--text)]">{firstName(m.name)}</span>
-                      <span className="block truncate text-xs" style={{ color: inkOf(color) }}>
-                        {m.topic}
-                      </span>
                     </span>
                   </span>
 
