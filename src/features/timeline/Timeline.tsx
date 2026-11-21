@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { SoonText } from '../../components/SoonText'
+import { isSoon } from '../../components/SoonText'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ExternalLink, GitBranch, X } from 'lucide-react'
 import { EmptyState } from '../../components/EmptyState'
@@ -116,10 +116,12 @@ export function Timeline() {
           )}
         </AnimatePresence>
 
-        <Reveal className="mt-12 rounded-2xl border-l-4 border-teal bg-[var(--surface)] p-6">
-          <h3 className="font-serif text-2xl font-semibold text-[var(--text)]">¿Qué aprendimos?</h3>
-          <p className="mt-2 leading-relaxed text-[var(--text-muted)]"><SoonText value={cfg?.timeline_learned} /></p>
-        </Reveal>
+        {cfg?.timeline_learned?.trim() && !isSoon(cfg.timeline_learned) && (
+          <Reveal className="mt-12 rounded-2xl border-l-4 border-teal bg-[var(--surface)] p-6">
+            <h3 className="font-serif text-2xl font-semibold text-[var(--text)]">¿Qué aprendimos?</h3>
+            <p className="mt-2 leading-relaxed text-[var(--text-muted)]">{cfg.timeline_learned}</p>
+          </Reveal>
+        )}
       </div>
     </section>
   )
