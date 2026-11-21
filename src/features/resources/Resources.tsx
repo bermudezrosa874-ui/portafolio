@@ -25,6 +25,7 @@ export function Resources() {
 
   // La línea de tiempo tiene su propia sección; aquí solo van los demás recursos.
   const resources = useMemo(() => all.filter((r) => r.kind !== 'timeline'), [all])
+  const single = resources.length === 1
   const numberOf = (id: string) => resources.findIndex((r) => r.id === id) + 1
 
   const visible = resources.filter(
@@ -61,7 +62,7 @@ export function Resources() {
           {resources.length === 1 ? 'recurso publicado' : 'recursos publicados'}
         </p>
 
-        {resources.length > 0 && (
+        {resources.length > 1 && (
           <Reveal className="mb-8 space-y-3">
             <div role="group" aria-label="Filtrar por tipo" className="flex flex-wrap justify-center gap-2">
               <button type="button" aria-pressed={kind === 'todos'} className={chip(kind === 'todos')} onClick={() => setKind('todos')}>
@@ -84,7 +85,10 @@ export function Resources() {
         ) : visible.length === 0 ? (
           <EmptyState icon={Puzzle} title="Ningún recurso coincide con estos filtros" text="Prueba con otro tipo u otra fase." />
         ) : (
-          <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-live="polite">
+          <ul
+            className={single ? 'mx-auto max-w-4xl' : 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3'}
+            aria-live="polite"
+          >
             <AnimatePresence mode="popLayout">
               {visible.map((r) => (
                 <ResourceCard
@@ -94,6 +98,7 @@ export function Resources() {
                   info={resolveEmbed(r.url)}
                   phaseLabel={phaseLabel(r.phase_id)}
                   onOpen={() => setActive(r)}
+                  featured={single}
                 />
               ))}
             </AnimatePresence>

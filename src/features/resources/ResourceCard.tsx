@@ -29,9 +29,11 @@ interface Props {
   info: EmbedInfo
   phaseLabel: string | null
   onOpen: () => void
+  /** Tarjeta destacada y horizontal, para cuando es el único recurso. */
+  featured?: boolean
 }
 
-export function ResourceCard({ resource, number, info, phaseLabel, onOpen }: Props) {
+export function ResourceCard({ resource, number, info, phaseLabel, onOpen, featured = false }: Props) {
   const tilt = useTilt(6)
   const kind = resource.kind === 'timeline' ? 'otro' : resource.kind
   const meta = KIND_META[kind]
@@ -39,7 +41,9 @@ export function ResourceCard({ resource, number, info, phaseLabel, onOpen }: Pro
   const embeddable = !!info.embedUrl
 
   const cta =
-    'mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#f5b942] px-5 py-2.5 text-sm font-semibold text-[#071426] transition-transform active:scale-95'
+    `mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#f5b942] px-5 py-2.5 text-sm font-semibold text-[#071426] transition-transform active:scale-95 ${
+      featured ? 'md:mt-2 md:w-auto md:self-start md:px-8 md:py-3 md:text-base' : ''
+    }`
 
   return (
     <motion.li
@@ -54,9 +58,15 @@ export function ResourceCard({ resource, number, info, phaseLabel, onOpen }: Pro
       <motion.div
         style={tilt.style}
         {...tilt.handlers}
-        className="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-lg backdrop-blur"
+        className={`flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-lg backdrop-blur ${
+          featured ? 'md:flex-row' : ''
+        }`}
       >
-        <div className="relative aspect-[16/10] bg-gradient-to-br from-violet/30 via-teal/20 to-gold/20">
+        <div
+          className={`relative bg-gradient-to-br from-violet/30 via-teal/20 to-gold/20 ${
+            featured ? 'aspect-[16/10] md:aspect-auto md:min-h-[320px] md:w-1/2 md:shrink-0' : 'aspect-[16/10]'
+          }`}
+        >
           {resource.cover_path ? (
             <img
               src={publicUrl('covers', resource.cover_path)}
@@ -75,16 +85,20 @@ export function ResourceCard({ resource, number, info, phaseLabel, onOpen }: Pro
           </span>
         </div>
 
-        <div className="flex flex-1 flex-col gap-3 p-5">
+        <div className={`flex flex-1 flex-col gap-3 p-5 ${featured ? 'md:justify-center md:gap-4 md:p-10' : ''}`}>
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] px-2.5 py-0.5 text-[var(--text)]">
               <Icon size={13} aria-hidden /> {meta.label}
             </span>
             {phaseLabel && <span className="rounded-full bg-teal/15 px-2.5 py-0.5 font-medium text-teal">{phaseLabel}</span>}
           </div>
-          <h3 className="font-serif text-2xl font-semibold leading-tight text-[var(--text)]">{resource.title}</h3>
+          <h3 className={`font-serif font-semibold leading-tight text-[var(--text)] ${featured ? 'text-2xl md:text-4xl' : 'text-2xl'}`}>
+            {resource.title}
+          </h3>
           {resource.description && (
-            <p className="line-clamp-3 text-sm leading-relaxed text-[var(--text-muted)]">{resource.description}</p>
+            <p className={`text-sm leading-relaxed text-[var(--text-muted)] ${featured ? 'md:text-base' : 'line-clamp-3'}`}>
+              {resource.description}
+            </p>
           )}
 
           {embeddable ? (
